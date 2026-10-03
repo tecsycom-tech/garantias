@@ -316,7 +316,7 @@
                         complete: function(results) {
                             if (results.data && results.data.length > 0) {
                                 processObjectsData(results.data);
-                                updateBadgeSuccess(sheetName, "Google Sheet direct");
+                                updateBadgeSuccess(sheetName, "");
                             } else {
                                 fallbackToEmbeddedData();
                             }
