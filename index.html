@@ -5,12 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reporte de Garantías por Cuadrilla - Mantenimiento</title>
     
-    <!-- Favicon de la página (Ícono de Reporte/Documento) -->
+    <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%234f46e5' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z'/%3E%3Cpolyline points='14 2 14 8 20 8'/%3E%3Cline x1='16' y1='13' x2='8' y2='13'/%3E%3Cline x1='16' y1='17' x2='8' y2='17'/%3E%3Cline x1='10' y1='9' x2='8' y2='9'/%3E%3C/svg%3E">
 
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- PapaParse para procesamiento de CSV/Archivos -->
+    <!-- PapaParse para CSV -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -58,7 +58,7 @@
 
     <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
 
-        <!-- Selector de Mes / Hoja y Botón de Sincronización Integrado -->
+        <!-- Selector de Mes / Hoja y Botón de Sincronización -->
         <section class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
             <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
                 
@@ -72,7 +72,7 @@
                     </div>
                 </div>
 
-                <!-- Selector de Meses Integrado -->
+                <!-- Selector de Meses -->
                 <div class="flex flex-wrap items-center gap-3">
                     <div class="flex items-center gap-2 bg-slate-50 border border-slate-200 rounded-xl px-3 py-1.5">
                         <label for="month-select" class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Hoja / Mes:</label>
@@ -96,7 +96,7 @@
                         <i data-lucide="refresh-cw" class="w-4 h-4" id="sync-icon"></i> Sincronizar Mes
                     </button>
 
-                    <!-- Respaldo Local de Emergencia -->
+                    <!-- Respaldo Local -->
                     <input type="file" id="csv-file-input" accept=".csv" class="hidden">
                     <button onclick="document.getElementById('csv-file-input').click()" title="Cargar CSV Local de respaldo" class="bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 text-xs px-3 py-2.5 rounded-xl transition flex items-center gap-1.5 shadow-sm">
                         <i data-lucide="file-up" class="w-4 h-4 text-slate-500"></i> CSV Local
@@ -124,15 +124,15 @@
         <section class="bg-white border border-slate-200 rounded-2xl p-5 space-y-4 shadow-sm">
             <div class="flex items-center justify-between border-b border-slate-100 pb-3">
                 <h3 class="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-2">
-                    <i data-lucide="search-code" class="w-4 h-4 text-indigo-600"></i> Consulta Específica & Filtros por Cuadrilla
+                    <i data-lucide="search-code" class="w-4 h-4 text-indigo-600"></i> Consulta Específica & Filtros
                 </h3>
                 <button onclick="resetFilters()" class="text-xs text-slate-500 hover:text-indigo-600 transition flex items-center gap-1">
                     <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i> Restablecer Filtros
                 </button>
             </div>
 
+            <!-- Fila 1 de Filtros (Búsqueda y Desplegables) -->
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                <!-- Consulta Unitaria: Ticket / Pedido / DNI -->
                 <div class="space-y-1.5">
                     <label class="text-[11px] font-semibold text-slate-500 uppercase">Buscar Ticket / Pedido / DNI / Cliente</label>
                     <div class="relative">
@@ -141,15 +141,13 @@
                     </div>
                 </div>
 
-                <!-- Filtro por Cuadrilla -->
                 <div class="space-y-1.5">
-                    <label class="text-[11px] font-semibold text-slate-500 uppercase">Filtrar por Cuadrilla (CUADRILLA_V)</label>
+                    <label class="text-[11px] font-semibold text-slate-500 uppercase">Cuadrilla (CUADRILLA_V)</label>
                     <select id="filter-cuadrilla" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-indigo-500 focus:bg-white transition">
                         <option value="">TODAS LAS CUADRILLAS</option>
                     </select>
                 </div>
 
-                <!-- Filtro por Estado Operación -->
                 <div class="space-y-1.5">
                     <label class="text-[11px] font-semibold text-slate-500 uppercase">Estado Operativo (ESTADO_OP)</label>
                     <select id="filter-estado" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-indigo-500 focus:bg-white transition">
@@ -157,12 +155,35 @@
                     </select>
                 </div>
 
-                <!-- Filtro por TipoCaso -->
                 <div class="space-y-1.5">
                     <label class="text-[11px] font-semibold text-slate-500 uppercase">Tipo Caso (TIPO CASO)</label>
                     <select id="filter-tipo" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-indigo-500 focus:bg-white transition">
                         <option value="">TODOS LOS TIPOS</option>
                     </select>
+                </div>
+            </div>
+
+            <!-- Fila 2 de Filtros: Rango de Fecha por Fecha_Gestion_v -->
+            <div class="pt-2 border-t border-slate-100 flex flex-wrap items-center gap-4">
+                <div class="flex items-center gap-2">
+                    <i data-lucide="calendar-range" class="w-4 h-4 text-indigo-600"></i>
+                    <span class="text-xs font-bold text-slate-700 uppercase">Filtrar por Fecha Gestión (Fecha_Gestion_v):</span>
+                </div>
+
+                <div class="flex items-center gap-3 flex-wrap">
+                    <div class="flex items-center gap-2">
+                        <label for="date-start" class="text-[11px] font-medium text-slate-500">Desde:</label>
+                        <input type="date" id="date-start" class="bg-slate-50 border border-slate-200 rounded-xl px-3 py-1.5 text-xs text-slate-800 focus:outline-none focus:border-indigo-500 focus:bg-white transition">
+                    </div>
+
+                    <div class="flex items-center gap-2">
+                        <label for="date-end" class="text-[11px] font-medium text-slate-500">Hasta:</label>
+                        <input type="date" id="date-end" class="bg-slate-50 border border-slate-200 rounded-xl px-3 py-1.5 text-xs text-slate-800 focus:outline-none focus:border-indigo-500 focus:bg-white transition">
+                    </div>
+
+                    <button onclick="clearDateFilter()" class="text-[11px] text-slate-500 hover:text-indigo-600 bg-slate-100 hover:bg-slate-200 px-2.5 py-1.5 rounded-lg transition">
+                        Limpiar Fechas
+                    </button>
                 </div>
             </div>
         </section>
@@ -200,6 +221,7 @@
                 <table class="w-full text-left text-xs whitespace-nowrap">
                     <thead class="bg-slate-100 text-slate-600 border-b border-slate-200 sticky top-0 uppercase tracking-wider font-bold">
                         <tr>
+                            <th class="px-3.5 py-3 text-indigo-600">FECHA GESTIÓN</th>
                             <th class="px-3.5 py-3">ESTADO</th>
                             <th class="px-3.5 py-3">TIPOCASO</th>
                             <th class="px-3.5 py-3">ESTADO_OP</th>
@@ -238,6 +260,7 @@
 
         // Mapeo estricto de columnas requeridas en MAYÚSCULAS
         const REQUIRED_COLUMNS_MAPPING = {
+            'Fecha_Gestion_v': 'FECHA_GESTION_V',
             'Estado': 'ESTADO',
             'TipoCaso': 'TIPOCASO',
             'Estado_op': 'ESTADO_OP',
@@ -253,7 +276,7 @@
             'Provincia': 'PROVINCIA',
             'Distrito': 'DISTRITO',
             'DistritoCTO_Uso': 'DISTRITO CTO_USO',
-            'CTO_Uso': 'CTO_USO',
+            'CTO_USO': 'CTO_USO',
             '4ta CTO': '4TA CTO',
             'Puerto Utilizado': 'PUERTO UTILIZADO',
             'SN': 'SN',
@@ -273,8 +296,12 @@
             document.getElementById('filter-cuadrilla').addEventListener('change', applyFilters);
             document.getElementById('filter-estado').addEventListener('change', applyFilters);
             document.getElementById('filter-tipo').addEventListener('change', applyFilters);
+            
+            // Listeners de fechas
+            document.getElementById('date-start').addEventListener('change', applyFilters);
+            document.getElementById('date-end').addEventListener('change', applyFilters);
 
-            // Cargar por defecto el mes de SEPTIEMBRE desde Google Sheets
+            // Cargar datos por defecto
             fetchSheetData();
         });
 
@@ -522,13 +549,46 @@
             });
         }
 
+        // Función Auxiliar para parsear fechas (Formatos YYYY-MM-DD, DD/MM/YYYY, etc.)
+        function parseDateString(str) {
+            if (!str || str === '-') return null;
+            
+            // Si viene en formato ISO YYYY-MM-DD
+            if (str.includes('-')) {
+                const parts = str.split('T')[0].split('-');
+                if (parts.length === 3 && parts[0].length === 4) {
+                    return new Date(parts[0], parts[1] - 1, parts[2]);
+                }
+            }
+
+            // Si viene en formato DD/MM/YYYY
+            if (str.includes('/')) {
+                const parts = str.split(' ');
+                const dateParts = parts[0].split('/');
+                if (dateParts.length === 3) {
+                    return new Date(dateParts[2], dateParts[1] - 1, dateParts[0]);
+                }
+            }
+
+            const parsed = new Date(str);
+            return isNaN(parsed) ? null : parsed;
+        }
+
         function applyFilters() {
             const searchVal = document.getElementById('search-input').value.toUpperCase().trim();
             const cuadrillaVal = document.getElementById('filter-cuadrilla').value;
             const estadoVal = document.getElementById('filter-estado').value;
             const tipoVal = document.getElementById('filter-tipo').value;
 
+            // Rango de Fechas
+            const startDateVal = document.getElementById('date-start').value;
+            const endDateVal = document.getElementById('date-end').value;
+
+            const startDate = startDateVal ? new Date(startDateVal + 'T00:00:00') : null;
+            const endDate = endDateVal ? new Date(endDateVal + 'T23:59:59') : null;
+
             const filtered = rawData.filter(row => {
+                // Coincidencia por texto libre
                 const matchSearch = !searchVal || 
                     row['TICKETU'].includes(searchVal) ||
                     row['TICKETS'].includes(searchVal) ||
@@ -538,15 +598,34 @@
                     row['DISTRITO'].includes(searchVal) ||
                     row['CUADRILLA_V'].includes(searchVal);
 
+                // Coincidencias desplegables
                 const matchCuadrilla = !cuadrillaVal || row['CUADRILLA_V'] === cuadrillaVal;
                 const matchEstado = !estadoVal || row['ESTADO_OP'] === estadoVal;
                 const matchTipo = !tipoVal || row['TIPOCASO'] === tipoVal;
 
-                return matchSearch && matchCuadrilla && matchEstado && matchTipo;
+                // Coincidencia por Rango de Fecha (Fecha_Gestion_v)
+                let matchDate = true;
+                if (startDate || endDate) {
+                    const recordDate = parseDateString(row['FECHA_GESTION_V']);
+                    if (recordDate) {
+                        if (startDate && recordDate < startDate) matchDate = false;
+                        if (endDate && recordDate > endDate) matchDate = false;
+                    } else {
+                        matchDate = false; // Si no hay fecha en el registro y hay filtro activo, se oculta
+                    }
+                }
+
+                return matchSearch && matchCuadrilla && matchEstado && matchTipo && matchDate;
             });
 
             renderTable(filtered);
             updateKPIs(filtered);
+        }
+
+        function clearDateFilter() {
+            document.getElementById('date-start').value = '';
+            document.getElementById('date-end').value = '';
+            applyFilters();
         }
 
         function updateKPIs(data) {
@@ -571,7 +650,7 @@
             if (data.length === 0) {
                 tbody.innerHTML = `
                     <tr>
-                        <td colspan="20" class="text-center py-12 text-slate-400 font-medium">
+                        <td colspan="21" class="text-center py-12 text-slate-400 font-medium">
                             No se encontraron registros que coincidan con la búsqueda o filtros seleccionados.
                         </td>
                     </tr>
@@ -584,6 +663,7 @@
                 tr.className = 'hover:bg-slate-50 transition border-b border-slate-100';
 
                 tr.innerHTML = `
+                    <td class="px-3.5 py-3 font-mono font-bold text-indigo-600">${row['FECHA_GESTION_V']}</td>
                     <td class="px-3.5 py-3 font-semibold text-slate-800">${row['ESTADO']}</td>
                     <td class="px-3.5 py-3">
                         <span class="px-2 py-0.5 rounded-md text-[10px] font-bold ${row['TIPOCASO'].includes('GARANTIA') ? 'bg-amber-100 text-amber-800 border border-amber-200' : 'bg-slate-100 text-slate-700'}">
@@ -618,7 +698,7 @@
             document.getElementById('filter-cuadrilla').value = '';
             document.getElementById('filter-estado').value = '';
             document.getElementById('filter-tipo').value = '';
-            applyFilters();
+            clearDateFilter();
         }
     </script>
 </body>
