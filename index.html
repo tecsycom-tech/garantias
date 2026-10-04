@@ -6,7 +6,7 @@
     <title>Reporte de Garantías por Cuadrilla - Mantenimiento</title>
     
     <!-- Favicon de la página (Ícono de Reporte/Documento) -->
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236366f1' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z'/%3E%3Cpolyline points='14 2 14 8 20 8'/%3E%3Cline x1='16' y1='13' x2='8' y2='13'/%3E%3Cline x1='16' y1='17' x2='8' y2='17'/%3E%3Cline x1='10' y1='9' x2='8' y2='9'/%3E%3C/svg%3E">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%234f46e5' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z'/%3E%3Cpolyline points='14 2 14 8 20 8'/%3E%3Cline x1='16' y1='13' x2='8' y2='13'/%3E%3Cline x1='16' y1='17' x2='8' y2='17'/%3E%3Cline x1='10' y1='9' x2='8' y2='9'/%3E%3C/svg%3E">
 
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -20,36 +20,36 @@
             width: 8px;
         }
         .custom-scrollbar::-webkit-scrollbar-track {
-            background: #0f172a;
+            background: #f1f5f9;
         }
         .custom-scrollbar::-webkit-scrollbar-thumb {
-            background: #334155;
+            background: #cbd5e1;
             border-radius: 4px;
         }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-            background: #475569;
+            background: #94a3b8;
         }
     </style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-sans">
+<body class="bg-slate-100 text-slate-800 min-h-screen flex flex-col font-sans">
 
     <!-- Header / Navbar Principal -->
-    <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-50">
+    <header class="border-b border-slate-200 bg-white/90 backdrop-blur sticky top-0 z-50 shadow-sm">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
             <div class="flex items-center space-x-3">
-                <div class="bg-indigo-600 p-2.5 rounded-xl text-white shadow-lg shadow-indigo-500/20">
+                <div class="bg-indigo-600 p-2.5 rounded-xl text-white shadow-md shadow-indigo-200">
                     <i data-lucide="shield-check" class="w-6 h-6"></i>
                 </div>
                 <div>
-                    <h1 class="font-bold text-lg text-slate-100 leading-tight">Módulo de Garantías y Mantenimiento</h1>
-                    <p class="text-xs text-slate-400">Control Operativo por Cuadrilla & Reporte Integrado</p>
+                    <h1 class="font-bold text-lg text-slate-900 leading-tight">Módulo de Garantías y Mantenimiento</h1>
+                    <p class="text-xs text-slate-500">Control Operativo por Cuadrilla & Reporte Integrado</p>
                 </div>
             </div>
             
             <!-- Estado de Conexión Nube -->
             <div class="flex items-center gap-3">
-                <span id="data-source-badge" class="px-3 py-1.5 rounded-full text-xs font-medium bg-amber-500/10 text-amber-400 border border-amber-500/20 flex items-center gap-2">
-                    <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+                <span id="data-source-badge" class="px-3 py-1.5 rounded-full text-xs font-medium bg-amber-50 text-amber-700 border border-amber-200 flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
                     Cargando Datos...
                 </span>
             </div>
@@ -59,24 +59,24 @@
     <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
 
         <!-- Selector de Mes / Hoja y Botón de Sincronización Integrado -->
-        <section class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
+        <section class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
             <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
                 
                 <div class="flex items-center gap-3">
-                    <div class="p-2 bg-slate-800 rounded-lg text-indigo-400">
+                    <div class="p-2 bg-indigo-50 rounded-lg text-indigo-600">
                         <i data-lucide="calendar" class="w-5 h-5"></i>
                     </div>
                     <div>
-                        <h2 class="text-sm font-semibold text-slate-200">Origen de Datos (Google Sheets)</h2>
-                        <p class="text-xs text-slate-400"><span class="font-mono text-indigo-300"></span> Apps Script Integrado</p>
+                        <h2 class="text-sm font-semibold text-slate-800">Origen de Datos (Google Sheets)</h2>
+                        <p class="text-xs text-slate-500"><span class="font-mono text-indigo-600"></span> Apps Script Integrado</p>
                     </div>
                 </div>
 
                 <!-- Selector de Meses Integrado -->
                 <div class="flex flex-wrap items-center gap-3">
-                    <div class="flex items-center gap-2 bg-slate-950 border border-slate-800 rounded-xl px-3 py-1.5">
-                        <label for="month-select" class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Hoja / Mes:</label>
-                        <select id="month-select" class="bg-transparent text-xs font-bold text-indigo-400 focus:outline-none cursor-pointer">
+                    <div class="flex items-center gap-2 bg-slate-50 border border-slate-200 rounded-xl px-3 py-1.5">
+                        <label for="month-select" class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Hoja / Mes:</label>
+                        <select id="month-select" class="bg-transparent text-xs font-bold text-indigo-600 focus:outline-none cursor-pointer">
                             <option value="ENERO">ENERO</option>
                             <option value="FEBRERO">FEBRERO</option>
                             <option value="MARZO">MARZO</option>
@@ -92,14 +92,14 @@
                         </select>
                     </div>
 
-                    <button onclick="fetchSheetData()" class="bg-indigo-600 hover:bg-indigo-500 text-white font-medium text-xs px-4 py-2.5 rounded-xl transition flex items-center gap-2 shadow-lg shadow-indigo-600/20 active:scale-95">
+                    <button onclick="fetchSheetData()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-xs px-4 py-2.5 rounded-xl transition flex items-center gap-2 shadow-md shadow-indigo-100 active:scale-95">
                         <i data-lucide="refresh-cw" class="w-4 h-4" id="sync-icon"></i> Sincronizar Mes
                     </button>
 
                     <!-- Respaldo Local de Emergencia -->
                     <input type="file" id="csv-file-input" accept=".csv" class="hidden">
-                    <button onclick="document.getElementById('csv-file-input').click()" title="Cargar CSV Local de respaldo" class="bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 text-xs px-3 py-2.5 rounded-xl transition flex items-center gap-1.5">
-                        <i data-lucide="file-up" class="w-4 h-4"></i> CSV Local
+                    <button onclick="document.getElementById('csv-file-input').click()" title="Cargar CSV Local de respaldo" class="bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 text-xs px-3 py-2.5 rounded-xl transition flex items-center gap-1.5 shadow-sm">
+                        <i data-lucide="file-up" class="w-4 h-4 text-slate-500"></i> CSV Local
                     </button>
                 </div>
 
@@ -107,12 +107,12 @@
         </section>
 
         <!-- RANKING DE GARANTÍAS POR CUADRILLA -->
-        <section class="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-4 shadow-xl">
-            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
-                <h3 class="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-2">
-                    <i data-lucide="trophy" class="w-4 h-4 text-amber-400"></i> Ranking - Garantías por Cuadrilla
+        <section class="bg-white border border-slate-200 rounded-2xl p-5 space-y-4 shadow-sm">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                <h3 class="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-2">
+                    <i data-lucide="trophy" class="w-4 h-4 text-amber-500"></i> Ranking - Garantías por Cuadrilla
                 </h3>
-                <span class="text-[11px] text-slate-400">Haz clic en una tarjeta para filtrar los clientes</span>
+                <span class="text-[11px] text-slate-500">Haz clic en una tarjeta para filtrar los clientes</span>
             </div>
             
             <div id="ranking-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -121,12 +121,12 @@
         </section>
 
         <!-- Panel de Filtros y Búsqueda de Registros -->
-        <section class="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-4 shadow-xl">
-            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
-                <h3 class="text-xs font-bold text-slate-300 uppercase tracking-wider flex items-center gap-2">
-                    <i data-lucide="search-code" class="w-4 h-4 text-indigo-400"></i> Consulta Específica & Filtros por Cuadrilla
+        <section class="bg-white border border-slate-200 rounded-2xl p-5 space-y-4 shadow-sm">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                <h3 class="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-2">
+                    <i data-lucide="search-code" class="w-4 h-4 text-indigo-600"></i> Consulta Específica & Filtros por Cuadrilla
                 </h3>
-                <button onclick="resetFilters()" class="text-xs text-slate-400 hover:text-indigo-400 transition flex items-center gap-1">
+                <button onclick="resetFilters()" class="text-xs text-slate-500 hover:text-indigo-600 transition flex items-center gap-1">
                     <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i> Restablecer Filtros
                 </button>
             </div>
@@ -134,33 +134,33 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 <!-- Consulta Unitaria: Ticket / Pedido / DNI -->
                 <div class="space-y-1.5">
-                    <label class="text-[11px] font-semibold text-slate-400 uppercase">Buscar Ticket / Pedido / DNI / Cliente</label>
+                    <label class="text-[11px] font-semibold text-slate-500 uppercase">Buscar Ticket / Pedido / DNI / Cliente</label>
                     <div class="relative">
-                        <input type="text" id="search-input" placeholder="Escribe Ticket, Pedido o DNI..." class="w-full bg-slate-950 border border-slate-800 rounded-xl pl-9 pr-3 py-2 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-indigo-500">
-                        <i data-lucide="search" class="w-4 h-4 absolute left-3 top-2.5 text-slate-500"></i>
+                        <input type="text" id="search-input" placeholder="Escribe Ticket, Pedido o DNI..." class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-9 pr-3 py-2 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-indigo-500 focus:bg-white transition">
+                        <i data-lucide="search" class="w-4 h-4 absolute left-3 top-2.5 text-slate-400"></i>
                     </div>
                 </div>
 
                 <!-- Filtro por Cuadrilla -->
                 <div class="space-y-1.5">
-                    <label class="text-[11px] font-semibold text-slate-400 uppercase">Filtrar por Cuadrilla (CUADRILLA_V)</label>
-                    <select id="filter-cuadrilla" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-indigo-500">
+                    <label class="text-[11px] font-semibold text-slate-500 uppercase">Filtrar por Cuadrilla (CUADRILLA_V)</label>
+                    <select id="filter-cuadrilla" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-indigo-500 focus:bg-white transition">
                         <option value="">TODAS LAS CUADRILLAS</option>
                     </select>
                 </div>
 
                 <!-- Filtro por Estado Operación -->
                 <div class="space-y-1.5">
-                    <label class="text-[11px] font-semibold text-slate-400 uppercase">Estado Operativo (ESTADO_OP)</label>
-                    <select id="filter-estado" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-indigo-500">
+                    <label class="text-[11px] font-semibold text-slate-500 uppercase">Estado Operativo (ESTADO_OP)</label>
+                    <select id="filter-estado" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-indigo-500 focus:bg-white transition">
                         <option value="">TODOS LOS ESTADOS</option>
                     </select>
                 </div>
 
                 <!-- Filtro por TipoCaso -->
                 <div class="space-y-1.5">
-                    <label class="text-[11px] font-semibold text-slate-400 uppercase">Tipo Caso (TIPO CASO)</label>
-                    <select id="filter-tipo" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-indigo-500">
+                    <label class="text-[11px] font-semibold text-slate-500 uppercase">Tipo Caso (TIPO CASO)</label>
+                    <select id="filter-tipo" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-indigo-500 focus:bg-white transition">
                         <option value="">TODOS LOS TIPOS</option>
                     </select>
                 </div>
@@ -169,36 +169,36 @@
 
         <!-- Indicadores Resumen KPI -->
         <section class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-lg">
-                <p class="text-[11px] font-semibold text-slate-400 uppercase">Total Registros</p>
-                <h4 id="kpi-total" class="text-2xl font-bold text-slate-100 mt-1">0</h4>
+            <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
+                <p class="text-[11px] font-semibold text-slate-500 uppercase">Total Registros</p>
+                <h4 id="kpi-total" class="text-2xl font-bold text-slate-900 mt-1">0</h4>
             </div>
-            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-lg">
-                <p class="text-[11px] font-semibold text-slate-400 uppercase">Cuadrillas Activas</p>
-                <h4 id="kpi-cuadrillas" class="text-2xl font-bold text-indigo-400 mt-1">0</h4>
+            <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
+                <p class="text-[11px] font-semibold text-slate-500 uppercase">Cuadrillas Activas</p>
+                <h4 id="kpi-cuadrillas" class="text-2xl font-bold text-indigo-600 mt-1">0</h4>
             </div>
-            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-lg">
-                <p class="text-[11px] font-semibold text-slate-400 uppercase">Casos Garantía / Atenciones</p>
-                <h4 id="kpi-garantias" class="text-2xl font-bold text-amber-400 mt-1">0</h4>
+            <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
+                <p class="text-[11px] font-semibold text-slate-500 uppercase">Casos Garantía / Atenciones</p>
+                <h4 id="kpi-garantias" class="text-2xl font-bold text-amber-600 mt-1">0</h4>
             </div>
-            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-lg">
-                <p class="text-[11px] font-semibold text-slate-400 uppercase">Operaciones Finalizadas</p>
-                <h4 id="kpi-cerrados" class="text-2xl font-bold text-emerald-400 mt-1">0</h4>
+            <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
+                <p class="text-[11px] font-semibold text-slate-500 uppercase">Operaciones Finalizadas</p>
+                <h4 id="kpi-cerrados" class="text-2xl font-bold text-emerald-600 mt-1">0</h4>
             </div>
         </section>
 
         <!-- Tabla de Reportería -->
-        <section class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden flex flex-col shadow-xl">
-            <div class="p-4 border-b border-slate-800 flex items-center justify-between bg-slate-900/50">
+        <section class="bg-white border border-slate-200 rounded-2xl overflow-hidden flex flex-col shadow-sm">
+            <div class="p-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
                 <div>
-                    <h3 class="font-bold text-sm text-slate-200">Informe de Mantenimiento y Garantías</h3>
-                    <p class="text-xs text-slate-400" id="results-count">Mostrando 0 registros</p>
+                    <h3 class="font-bold text-sm text-slate-800">Informe de Mantenimiento y Garantías</h3>
+                    <p class="text-xs text-slate-500" id="results-count">Mostrando 0 registros</p>
                 </div>
             </div>
 
             <div class="overflow-x-auto custom-scrollbar flex-1 max-h-[600px]">
                 <table class="w-full text-left text-xs whitespace-nowrap">
-                    <thead class="bg-slate-950 text-slate-400 border-b border-slate-800 sticky top-0 uppercase tracking-wider font-bold">
+                    <thead class="bg-slate-100 text-slate-600 border-b border-slate-200 sticky top-0 uppercase tracking-wider font-bold">
                         <tr>
                             <th class="px-3.5 py-3">ESTADO</th>
                             <th class="px-3.5 py-3">TIPOCASO</th>
@@ -213,9 +213,8 @@
                             <th class="px-3.5 py-3">DIRECCION_CLIENTE</th>
                             <th class="px-3.5 py-3">DEPARTAMENTO</th>
                             <th class="px-3.5 py-3">PROVINCIA</th>
-                            <!-- COLUMNAS CORREGIDAS Y SEPARADAS -->
-                            <th class="px-3.5 py-3 text-indigo-400">DISTRITO</th>
-                            <th class="px-3.5 py-3 text-indigo-400">CTO_USO</th>
+                            <th class="px-3.5 py-3 text-indigo-600">DISTRITO</th>
+                            <th class="px-3.5 py-3 text-indigo-600">CTO_USO</th>
                             <th class="px-3.5 py-3">4TA CTO</th>
                             <th class="px-3.5 py-3">PUERTO UTILIZADO</th>
                             <th class="px-3.5 py-3">SN</th>
@@ -223,7 +222,7 @@
                             <th class="px-3.5 py-3">OBS_TECNICO_V</th>
                         </tr>
                     </thead>
-                    <tbody id="table-body" class="divide-y divide-slate-800/60 text-slate-300">
+                    <tbody id="table-body" class="divide-y divide-slate-200 text-slate-700">
                         <!-- Generación dinámica -->
                     </tbody>
                 </table>
@@ -279,21 +278,18 @@
             fetchSheetData();
         });
 
-        // Función para consultar Google Sheets mediante Apps Script o exportador CSV público
         function fetchSheetData() {
             const sheetName = document.getElementById('month-select').value;
             const badge = document.getElementById('data-source-badge');
             const syncIcon = document.getElementById('sync-icon');
 
-            badge.className = "px-3 py-1.5 rounded-full text-xs font-medium bg-amber-500/10 text-amber-400 border border-amber-500/20 flex items-center gap-2";
-            badge.innerHTML = `<span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span> Cargando Hoja ${sheetName}...`;
+            badge.className = "px-3 py-1.5 rounded-full text-xs font-medium bg-amber-50 text-amber-700 border border-amber-200 flex items-center gap-2";
+            badge.innerHTML = `<span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span> Cargando Hoja ${sheetName}...`;
             syncIcon.classList.add('animate-spin');
 
-            // URL directa del Endpoint Apps Script o de exportación pública por pestaña
             const endpoint = `${APPS_SCRIPT_WEB_APP_URL}?sheetName=${encodeURIComponent(sheetName)}&spreadsheetId=${SPREADSHEET_ID}`;
             const directGsheetCsvUrl = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(sheetName)}`;
 
-            // Primer intento: Consultar Apps Script Web App
             fetch(endpoint)
                 .then(res => {
                     if (!res.ok) throw new Error("Respuesta no OK de Apps Script");
@@ -312,7 +308,6 @@
                 })
                 .catch(err => {
                     console.warn("Reintentando con conector directo CSV de Google Sheets...", err);
-                    // Segundo intento (Fallback): Carga directa CSV de la hoja
                     Papa.parse(directGsheetCsvUrl, {
                         download: true,
                         header: true,
@@ -342,16 +337,16 @@
                 skipEmptyLines: true,
                 complete: function(results) {
                     processObjectsData(results.data);
-                    document.getElementById('data-source-badge').className = "px-3 py-1.5 rounded-full text-xs font-medium bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 flex items-center gap-2";
-                    document.getElementById('data-source-badge').innerHTML = `<span class="w-2 h-2 rounded-full bg-indigo-400"></span> Datos Locales Adjuntos`;
+                    document.getElementById('data-source-badge').className = "px-3 py-1.5 rounded-full text-xs font-medium bg-indigo-50 text-indigo-700 border border-indigo-200 flex items-center gap-2";
+                    document.getElementById('data-source-badge').innerHTML = `<span class="w-2 h-2 rounded-full bg-indigo-500"></span> Datos Locales Adjuntos`;
                 }
             });
         }
 
         function updateBadgeSuccess(sheetName, sourceName) {
             const badge = document.getElementById('data-source-badge');
-            badge.className = "px-3 py-1.5 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center gap-2";
-            badge.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-400"></span> Conectado: ${sheetName}`;
+            badge.className = "px-3 py-1.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center gap-2";
+            badge.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-500"></span> Conectado: ${sheetName}`;
         }
 
         function handleFileUpload(e) {
@@ -363,8 +358,8 @@
                 skipEmptyLines: true,
                 complete: function(results) {
                     processObjectsData(results.data);
-                    document.getElementById('data-source-badge').className = "px-3 py-1.5 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center gap-2";
-                    document.getElementById('data-source-badge').innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-400"></span> CSV Subido Exitosamente`;
+                    document.getElementById('data-source-badge').className = "px-3 py-1.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center gap-2";
+                    document.getElementById('data-source-badge').innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-500"></span> CSV Subido Exitosamente`;
                 }
             });
         }
@@ -378,7 +373,6 @@
                     formattedRow[upperHeader] = val ? val.toString().trim().toUpperCase() : '';
                 }
                 
-                // Normalización de Distrito y CTO_Uso si vienen combinados
                 let distrito = formattedRow['DISTRITO'] || '';
                 let ctoUso = formattedRow['CTO_USO'] || '';
                 let distritoCtoCombined = formattedRow['DISTRITO CTO_USO'] || '';
@@ -419,7 +413,6 @@
                     formattedRow[upperHeader] = val ? val.toString().trim().toUpperCase() : '';
                 }
 
-                // Normalización de Distrito y CTO_Uso si vienen combinados
                 let distrito = formattedRow['DISTRITO'] || '';
                 let ctoUso = formattedRow['CTO_USO'] || '';
                 let distritoCtoCombined = formattedRow['DISTRITO CTO_USO'] || '';
@@ -446,12 +439,10 @@
             const rankingContainer = document.getElementById('ranking-container');
             rankingContainer.innerHTML = '';
 
-            // Filtrar solo registros de tipo GARANTIA
             const garantiasData = rawData.filter(row => 
                 row['TIPOCASO'].includes('GARANTIA') || row['ESTADO'].includes('GARANTIA')
             );
 
-            // Agrupar por Cuadrilla
             const cuadrillaCounts = {};
             garantiasData.forEach(row => {
                 const c = row['CUADRILLA_V'] || 'SIN ASIGNAR';
@@ -460,14 +451,13 @@
                 }
             });
 
-            // Ordenar de mayor a menor
             const sortedCuadrillas = Object.entries(cuadrillaCounts)
                 .sort((a, b) => b[1] - a[1])
-                .slice(0, 4); // Top 4
+                .slice(0, 4);
 
             if (sortedCuadrillas.length === 0) {
                 rankingContainer.innerHTML = `
-                    <div class="col-span-full text-center py-4 text-slate-500 text-xs">
+                    <div class="col-span-full text-center py-4 text-slate-400 text-xs">
                         No hay registros de garantías para calcular el ranking.
                     </div>`;
                 return;
@@ -475,22 +465,22 @@
 
             sortedCuadrillas.forEach(([cuadrilla, total], idx) => {
                 const card = document.createElement('div');
-                card.className = "bg-slate-950 border border-slate-800 rounded-xl p-4 cursor-pointer hover:border-indigo-500 hover:shadow-lg hover:shadow-indigo-500/10 transition flex items-center justify-between group";
+                card.className = "bg-slate-50 border border-slate-200 rounded-xl p-4 cursor-pointer hover:border-indigo-500 hover:shadow-md hover:bg-white transition flex items-center justify-between group";
                 card.onclick = () => filterByRankingCuadrilla(cuadrilla);
 
                 card.innerHTML = `
                     <div class="flex items-center space-x-3">
-                        <div class="w-8 h-8 rounded-lg bg-indigo-500/10 text-indigo-400 font-bold text-xs flex items-center justify-center border border-indigo-500/20 group-hover:bg-indigo-600 group-hover:text-white transition">
+                        <div class="w-8 h-8 rounded-lg bg-indigo-100 text-indigo-700 font-bold text-xs flex items-center justify-center border border-indigo-200 group-hover:bg-indigo-600 group-hover:text-white transition">
                             #${idx + 1}
                         </div>
                         <div>
-                            <h4 class="text-xs font-bold text-slate-200 group-hover:text-indigo-400 transition">${cuadrilla}</h4>
-                            <p class="text-[10px] text-slate-400">Cuadrilla Operativa</p>
+                            <h4 class="text-xs font-bold text-slate-800 group-hover:text-indigo-600 transition">${cuadrilla}</h4>
+                            <p class="text-[10px] text-slate-500">Cuadrilla Operativa</p>
                         </div>
                     </div>
                     <div class="text-right">
-                        <span class="text-lg font-bold text-amber-400">${total}</span>
-                        <p class="text-[10px] text-slate-500">Garantías</p>
+                        <span class="text-lg font-bold text-amber-600">${total}</span>
+                        <p class="text-[10px] text-slate-400">Garantías</p>
                     </div>
                 `;
                 rankingContainer.appendChild(card);
@@ -502,7 +492,6 @@
             selectCuadrilla.value = cuadrilla;
             applyFilters();
 
-            // Scroll suave hacia la tabla de informe
             document.querySelector('section:has(#table-body)').scrollIntoView({ behavior: 'smooth' });
         }
 
@@ -540,7 +529,6 @@
             const tipoVal = document.getElementById('filter-tipo').value;
 
             const filtered = rawData.filter(row => {
-                // Búsqueda específica por TicketU, TicketS, valida_cod_pedido, dni_cliente, nom_cliente o distrito
                 const matchSearch = !searchVal || 
                     row['TICKETU'].includes(searchVal) ||
                     row['TICKETS'].includes(searchVal) ||
@@ -583,7 +571,7 @@
             if (data.length === 0) {
                 tbody.innerHTML = `
                     <tr>
-                        <td colspan="20" class="text-center py-12 text-slate-500 font-medium">
+                        <td colspan="20" class="text-center py-12 text-slate-400 font-medium">
                             No se encontraron registros que coincidan con la búsqueda o filtros seleccionados.
                         </td>
                     </tr>
@@ -593,34 +581,33 @@
 
             data.forEach(row => {
                 const tr = document.createElement('tr');
-                tr.className = 'hover:bg-slate-800/40 transition border-b border-slate-800/40';
+                tr.className = 'hover:bg-slate-50 transition border-b border-slate-100';
 
                 tr.innerHTML = `
-                    <td class="px-3.5 py-3 font-semibold text-slate-200">${row['ESTADO']}</td>
+                    <td class="px-3.5 py-3 font-semibold text-slate-800">${row['ESTADO']}</td>
                     <td class="px-3.5 py-3">
-                        <span class="px-2 py-0.5 rounded-md text-[10px] font-bold ${row['TIPOCASO'].includes('GARANTIA') ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' : 'bg-slate-800 text-slate-300'}">
+                        <span class="px-2 py-0.5 rounded-md text-[10px] font-bold ${row['TIPOCASO'].includes('GARANTIA') ? 'bg-amber-100 text-amber-800 border border-amber-200' : 'bg-slate-100 text-slate-700'}">
                             ${row['TIPOCASO']}
                         </span>
                     </td>
                     <td class="px-3.5 py-3">${row['ESTADO_OP']}</td>
-                    <td class="px-3.5 py-3 font-bold text-indigo-400">${row['CUADRILLA_V']}</td>
-                    <td class="px-3.5 py-3 font-mono text-slate-300">${row['TICKETU']}</td>
-                    <td class="px-3.5 py-3 font-mono text-slate-300">${row['TICKETS']}</td>
-                    <td class="px-3.5 py-3 font-mono text-emerald-400 font-bold">${row['VALIDA_COD_PEDIDO']}</td>
-                    <td class="px-3.5 py-3 font-mono text-slate-300">${row['DNI_CLIENTE']}</td>
-                    <td class="px-3.5 py-3 font-medium text-slate-200">${row['NOM_CLIENTE']}</td>
-                    <td class="px-3.5 py-3 font-mono text-slate-400 text-[11px]">${row['COORDENADAS_DIRECCION']}</td>
+                    <td class="px-3.5 py-3 font-bold text-indigo-600">${row['CUADRILLA_V']}</td>
+                    <td class="px-3.5 py-3 font-mono text-slate-600">${row['TICKETU']}</td>
+                    <td class="px-3.5 py-3 font-mono text-slate-600">${row['TICKETS']}</td>
+                    <td class="px-3.5 py-3 font-mono text-emerald-700 font-bold">${row['VALIDA_COD_PEDIDO']}</td>
+                    <td class="px-3.5 py-3 font-mono text-slate-600">${row['DNI_CLIENTE']}</td>
+                    <td class="px-3.5 py-3 font-medium text-slate-800">${row['NOM_CLIENTE']}</td>
+                    <td class="px-3.5 py-3 font-mono text-slate-500 text-[11px]">${row['COORDENADAS_DIRECCION']}</td>
                     <td class="px-3.5 py-3 max-w-xs truncate" title="${row['DIRECCION_CLIENTE']}">${row['DIRECCION_CLIENTE']}</td>
                     <td class="px-3.5 py-3">${row['DEPARTAMENTO']}</td>
                     <td class="px-3.5 py-3">${row['PROVINCIA']}</td>
-                    <!-- VALORES DE COLUMNAS MOSTRADOS DE FORMA INDEPENDIENTE -->
-                    <td class="px-3.5 py-3 font-bold text-indigo-300">${row['DISTRITO']}</td>
-                    <td class="px-3.5 py-3 font-mono text-slate-300">${row['CTO_USO']}</td>
+                    <td class="px-3.5 py-3 font-bold text-indigo-600">${row['DISTRITO']}</td>
+                    <td class="px-3.5 py-3 font-mono text-slate-600">${row['CTO_USO']}</td>
                     <td class="px-3.5 py-3">${row['4TA CTO']}</td>
                     <td class="px-3.5 py-3 font-mono">${row['PUERTO UTILIZADO']}</td>
                     <td class="px-3.5 py-3 font-mono">${row['SN']}</td>
                     <td class="px-3.5 py-3 font-mono">${row['SN_MESH']}</td>
-                    <td class="px-3.5 py-3 max-w-xs truncate text-slate-400" title="${row['OBS_TECNICO_V']}">${row['OBS_TECNICO_V']}</td>
+                    <td class="px-3.5 py-3 max-w-xs truncate text-slate-500" title="${row['OBS_TECNICO_V']}">${row['OBS_TECNICO_V']}</td>
                 `;
                 tbody.appendChild(tr);
             });
