@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reporte de Garantías por Cuadrilla - Mantenimiento</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%234f46e5' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z'/%3E%3Cpolyline points='14 2 14 8 20 8'/%3E%3Cline x1='16' y1='13' x2='8' y2='13'/%3E%3Cline x1='16' y1='17' x2='8' y2='17'/%3E%3Cline x1='10' y1='9' x2='8' y2='9'/%3E%3C/svg%3E">
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- PapaParse para CSV -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Chart.js para Gráficos Estadísticos -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Chart.js Plugin Datalabels para mostrar cantidades sobre/al lado de cada barra -->
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0"></script>
+    <style>
+        .custom-scrollbar::-webkit-scrollbar {
+            height: 8px;
+            width: 8px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800 min-h-screen flex flex-col font-sans">
+
+    <!-- Header / Navbar Principal -->
+    <header class="border-b border-slate-200 bg-white/90 backdrop-blur sticky top-0 z-50 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="bg-indigo-600 p-2.5 rounded-xl text-white shadow-md shadow-indigo-200">
+                    <i data-lucide="shield-check" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <h1 class="font-bold text-lg text-slate-900 leading-tight">Módulo de Garantías y Mantenimiento</h1>
+                    <p class="text-xs text-slate-500">Control Operativo por Cuadrilla & Reporte Integrado</p>
+                </div>
+            </div>
+            
+            <!-- Estado de Conexión Nube -->
+            <div class="flex items-center gap-3">
+                <span id="data-source-badge" class="px-3 py-1.5 rounded-full text-xs font-medium bg-amber-50 text-amber-700 border border-amber-200 flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
+                    Cargando Datos...
+                </span>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+
+        <!-- Selector de Mes / Hoja y Botón de Sincronización -->
+        <section class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
+            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                
+                <div class="flex items-center gap-3">
+                    <div class="p-2 bg-indigo-50 rounded-lg text-indigo-600">
+                        <i data-lucide="calendar" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-sm font-semibold text-slate-800">Origen de Datos (Google Sheets)</h2>
+                        <p class="text-xs text-slate-500"><span class="font-mono text-indigo-600"></span> Apps Script Integrado</p>
+                    </div>
+                </div>
+
+                <!-- Selector de Meses -->
+                <div class="flex flex-wrap items-center gap-3">
+                    <div class="flex items-center gap-2 bg-slate-50 border border-slate-200 rounded-xl px-3 py-1.5">
+                        <label for="month-select" class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Hoja / Mes:</label>
+                        <select id="month-select" class="bg-transparent text-xs font-bold text-indigo-600 focus:outline-none cursor-pointer">
+                            <option value="ENERO">ENERO</option>
+                            <option value="FEBRERO">FEBRERO</option>
+                            <option value="MARZO">MARZO</option>
+                            <option value="ABRIL">ABRIL</option>
+                            <option value="MAYO">MAYO</option>
+                            <option value="JUNIO">JUNIO</option>
+                            <option value="JULIO">JULIO</option>
+                            <option value="AGOSTO">AGOSTO</option>
+                            <option value="SEPTIEMBRE" selected>SEPTIEMBRE</option>
+                            <option value="OCTUBRE">OCTUBRE</option>
+                            <option value="NOVIEMBRE">NOVIEMBRE</option>
+                            <option value="DICIEMBRE">DICIEMBRE</option>
+                        </select>
+                    </div>
+
+                    <button onclick="fetchSheetData()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-xs px-4 py-2.5 rounded-xl transition flex items-center gap-2 shadow-md shadow-indigo-100 active:scale-95">
+                        <i data-lucide="refresh-cw" class="w-4 h-4" id="sync-icon"></i> Sincronizar Mes
+                    </button>
+
+                    <!-- Respaldo Local -->
+                    <input type="file" id="csv-file-input" accept=".csv" class="hidden">
+                    <button onclick="document.getElementById('csv-file-input').click()" title="Cargar CSV Local de respaldo" class="bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 text-xs px-3 py-2.5 rounded-xl transition flex items-center gap-1.5 shadow-sm">
+                        <i data-lucide="file-up" class="w-4 h-4 text-slate-500"></i> CSV Local
+                    </button>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- RANKING DE GARANTÍAS POR CUADRILLA -->
+        <section class="bg-white border border-slate-200 rounded-2xl p-5 space-y-4 shadow-sm">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                <h3 class="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-2">
+                    <i data-lucide="trophy" class="w-4 h-4 text-amber-500"></i> Ranking - Garantías por Cuadrilla
+                </h3>
+                <span class="text-[11px] text-slate-500">Haz clic en una tarjeta para filtrar los clientes</span>
+            </div>
+            
+            <div id="ranking-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <!-- Se poblará dinámicamente -->
+            </div>
+        </section>
+
+        <!-- Panel de Filtros y Búsqueda de Registros -->
+        <section class="bg-white border border-slate-200 rounded-2xl p-5 space-y-4 shadow-sm">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                <h3 class="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-2">
+                    <i data-lucide="search-code" class="w-4 h-4 text-indigo-600"></i> Consulta Específica & Filtros
+                </h3>
+                <button onclick="resetFilters()" class="text-xs text-slate-500 hover:text-indigo-600 transition flex items-center gap-1">
+                    <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i> Restablecer Filtros
+                </button>
+            </div>
+
+            <!-- Fila 1 de Filtros (Búsqueda y Desplegables) -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="space-y-1.5">
+                    <label class="text-[11px] font-semibold text-slate-500 uppercase">Buscar Ticket / Pedido / DNI / Cliente</label>
+                    <div class="relative">
+                        <input type="text" id="search-input" placeholder="Escribe Ticket, Pedido o DNI..." class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-9 pr-3 py-2 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-indigo-500 focus:bg-white transition">
+                        <i data-lucide="search" class="w-4 h-4 absolute left-3 top-2.5 text-slate-400"></i>
+                    </div>
+                </div>
+
+                <div class="space-y-1.5">
+                    <label class="text-[11px] font-semibold text-slate-500 uppercase">Cuadrilla (CUADRILLA_V)</label>
+                    <select id="filter-cuadrilla" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-indigo-500 focus:bg-white transition">
+                        <option value="">TODAS LAS CUADRILLAS</option>
+                    </select>
+                </div>
+
+                <div class="space-y-1.5">
+                    <label class="text-[11px] font-semibold text-slate-500 uppercase">Estado Operativo (ESTADO_OP)</label>
+                    <select id="filter-estado" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-indigo-500 focus:bg-white transition">
+                        <option value="">TODOS LOS ESTADOS</option>
+                    </select>
+                </div>
+
+                <div class="space-y-1.5">
+                    <label class="text-[11px] font-semibold text-slate-500 uppercase">Tipo Caso (TIPO CASO)</label>
+                    <select id="filter-tipo" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-indigo-500 focus:bg-white transition">
+                        <option value="">TODOS LOS TIPOS</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Fila 2 de Filtros: Rango de Fecha por Fecha_Gestion_v -->
+            <div class="pt-2 border-t border-slate-100 flex flex-wrap items-center gap-4">
+                <div class="flex items-center gap-2">
+                    <i data-lucide="calendar-range" class="w-4 h-4 text-indigo-600"></i>
+                    <span class="text-xs font-bold text-slate-700 uppercase">Filtrar por Fecha Gestión (Fecha_Gestion_v):</span>
+                </div>
+
+                <div class="flex items-center gap-3 flex-wrap">
+                    <div class="flex items-center gap-2">
+                        <label for="date-start" class="text-[11px] font-medium text-slate-500">Desde:</label>
+                        <input type="date" id="date-start" class="bg-slate-50 border border-slate-200 rounded-xl px-3 py-1.5 text-xs text-slate-800 focus:outline-none focus:border-indigo-500 focus:bg-white transition">
+                    </div>
+
+                    <div class="flex items-center gap-2">
+                        <label for="date-end" class="text-[11px] font-medium text-slate-500">Hasta:</label>
+                        <input type="date" id="date-end" class="bg-slate-50 border border-slate-200 rounded-xl px-3 py-1.5 text-xs text-slate-800 focus:outline-none focus:border-indigo-500 focus:bg-white transition">
+                    </div>
+
+                    <button onclick="clearDateFilter()" class="text-[11px] text-slate-500 hover:text-indigo-600 bg-slate-100 hover:bg-slate-200 px-2.5 py-1.5 rounded-lg transition">
+                        Limpiar Fechas
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Indicadores Resumen KPI -->
+        <section class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
+                <p class="text-[11px] font-semibold text-slate-500 uppercase">Total Registros</p>
+                <h4 id="kpi-total" class="text-2xl font-bold text-slate-900 mt-1">0</h4>
+            </div>
+            <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
+                <p class="text-[11px] font-semibold text-slate-500 uppercase">Cuadrillas Activas</p>
+                <h4 id="kpi-cuadrillas" class="text-2xl font-bold text-indigo-600 mt-1">0</h4>
+            </div>
+            <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
+                <p class="text-[11px] font-semibold text-slate-500 uppercase">Casos Garantía / Atenciones</p>
+                <h4 id="kpi-garantias" class="text-2xl font-bold text-red-600 mt-1">0</h4>
+            </div>
+            <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
+                <p class="text-[11px] font-semibold text-slate-500 uppercase">Operaciones Finalizadas</p>
+                <h4 id="kpi-cerrados" class="text-2xl font-bold text-emerald-600 mt-1">0</h4>
+            </div>
+        </section>
+
+        <!-- SECCIÓN DE GRÁFICO ESTADÍSTICO HORIZONTAL POR TIPO DE CASO -->
+        <section class="bg-white border border-slate-200 rounded-2xl p-5 space-y-4 shadow-sm">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                <h3 class="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-2">
+                    <i data-lucide="bar-chart-3" class="w-4 h-4 text-red-600"></i> Garantías por Técnico (de mayor a menor)
+                </h3>
+                <div class="flex items-center gap-3 text-[11px]">
+                    <span class="flex items-center gap-1 font-semibold text-red-600">
+                        <span class="w-2.5 h-2.5 rounded-full bg-red-600"></span> Cantidad de garantías por cuadrilla/técnico
+                    </span>
+                </div>
+            </div>
+            <div id="tecnico-chart-box" class="relative w-full min-h-[220px]">
+                <canvas id="tecnicoChart"></canvas>
+            </div>
+        </section>
+
+        <!-- Tabla de Reportería -->
+        <section class="bg-white border border-slate-200 rounded-2xl overflow-hidden flex flex-col shadow-sm">
+            <div class="p-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+                <div>
+                    <h3 class="font-bold text-sm text-slate-800">Informe de Mantenimiento y Garantías</h3>
+                    <p class="text-xs text-slate-500" id="results-count">Mostrando 0 registros</p>
+                </div>
+            </div>
+
+            <div class="overflow-x-auto custom-scrollbar flex-1 max-h-[600px]">
+                <table class="w-full text-left text-xs whitespace-nowrap">
+                    <thead class="bg-slate-100 text-slate-600 border-b border-slate-200 sticky top-0 uppercase tracking-wider font-bold">
+                        <tr>
+                            <th class="px-3.5 py-3 text-indigo-600">FECHA GESTIÓN</th>
+                            <th class="px-3.5 py-3">ESTADO</th>
+                            <th class="px-3.5 py-3">TIPOCASO</th>
+                            <th class="px-3.5 py-3">ESTADO_OP</th>
+                            <th class="px-3.5 py-3">CUADRILLA_V</th>
+                            <th class="px-3.5 py-3">TICKETU</th>
+                            <th class="px-3.5 py-3">TICKETS</th>
+                            <th class="px-3.5 py-3">VALIDA_COD_PEDIDO</th>
+                            <th class="px-3.5 py-3">DNI_CLIENTE</th>
+                            <th class="px-3.5 py-3">NOM_CLIENTE</th>
+                            <th class="px-3.5 py-3">COORDENADAS_DIRECCION</th>
+                            <th class="px-3.5 py-3">DIRECCION_CLIENTE</th>
+                            <th class="px-3.5 py-3">DEPARTAMENTO</th>
+                            <th class="px-3.5 py-3">PROVINCIA</th>
+                            <th class="px-3.5 py-3 text-indigo-600">DISTRITO</th>
+                            <th class="px-3.5 py-3 text-indigo-600">CTO_USO</th>
+                            <th class="px-3.5 py-3">4TA CTO</th>
+                            <th class="px-3.5 py-3">PUERTO UTILIZADO</th>
+                            <th class="px-3.5 py-3">SN</th>
+                            <th class="px-3.5 py-3">SN_MESH</th>
+                            <th class="px-3.5 py-3">OBS_TECNICO_V</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-body" class="divide-y divide-slate-200 text-slate-700">
+                        <!-- Generación dinámica -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        // CONFIGURACIÓN DE CONEXIÓN A GOOGLE SHEETS
+        const APPS_SCRIPT_WEB_APP_URL = "https://script.google.com/macros/s/AKfycby6xmNGRmKPRWdUsIdGK4iil0xtmOOHrRp8nE7LbgYegQWaqt5fPFRdzWwdrWG41L0V/exec";
+        const SPREADSHEET_ID = "1iw8zHpOKAAK8oRpLdLZNO7fA1DeOc-uOD94ffhmjP8g";
+
+        // Registrar el plugin de DataLabels para Chart.js
+        if (typeof ChartDataLabels !== 'undefined') {
+            Chart.register(ChartDataLabels);
+        }
+
+        // Mapeo estricto de columnas requeridas en MAYÚSCULAS
+        const REQUIRED_COLUMNS_MAPPING = {
+            'Fecha_Gestion_v': 'FECHA_GESTION_V',
+            'Estado': 'ESTADO',
+            'TipoCaso': 'TIPOCASO',
+            'Estado_op': 'ESTADO_OP',
+            'Cuadrilla_v': 'CUADRILLA_V',
+            'TicketU': 'TICKETU',
+            'TicketS': 'TICKETS',
+            'valida_cod_pedido': 'VALIDA_COD_PEDIDO',
+            'dni_cliente': 'DNI_CLIENTE',
+            'nom_cliente': 'NOM_CLIENTE',
+            'coordenadas_direccion': 'COORDENADAS_DIRECCION',
+            'direccion_cliente': 'DIRECCION_CLIENTE',
+            'Departamento': 'DEPARTAMENTO',
+            'Provincia': 'PROVINCIA',
+            'Distrito': 'DISTRITO',
+            'DistritoCTO_Uso': 'DISTRITO CTO_USO',
+            'CTO_USO': 'CTO_USO',
+            '4ta CTO': '4TA CTO',
+            'Puerto Utilizado': 'PUERTO UTILIZADO',
+            'SN': 'SN',
+            'SN_MESH': 'SN_MESH',
+            'Obs_tecnico_v': 'OBS_TECNICO_V'
+        };
+
+        let rawData = [];
+        let tecnicoChartInstance = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+
+            // Event Listeners
+            document.getElementById('month-select').addEventListener('change', fetchSheetData);
+            document.getElementById('csv-file-input').addEventListener('change', handleFileUpload);
+            document.getElementById('search-input').addEventListener('input', applyFilters);
+            document.getElementById('filter-cuadrilla').addEventListener('change', applyFilters);
+            document.getElementById('filter-estado').addEventListener('change', applyFilters);
+            document.getElementById('filter-tipo').addEventListener('change', applyFilters);
+            
+            // Listeners de fechas
+            document.getElementById('date-start').addEventListener('change', applyFilters);
+            document.getElementById('date-end').addEventListener('change', applyFilters);
+
+            // Cargar datos por defecto
+            fetchSheetData();
+        });
+
+        function fetchSheetData() {
+            const sheetName = document.getElementById('month-select').value;
+            const badge = document.getElementById('data-source-badge');
+            const syncIcon = document.getElementById('sync-icon');
+
+            badge.className = "px-3 py-1.5 rounded-full text-xs font-medium bg-amber-50 text-amber-700 border border-amber-200 flex items-center gap-2";
+            badge.innerHTML = `<span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span> Cargando Hoja ${sheetName}...`;
+            syncIcon.classList.add('animate-spin');
+
+            const endpoint = `${APPS_SCRIPT_WEB_APP_URL}?sheetName=${encodeURIComponent(sheetName)}&spreadsheetId=${SPREADSHEET_ID}`;
+            const directGsheetCsvUrl = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(sheetName)}`;
+
+            fetch(endpoint)
+                .then(res => {
+                    if (!res.ok) throw new Error("Respuesta no OK de Apps Script");
+                    return res.json();
+                })
+                .then(jsonResponse => {
+                    if (jsonResponse && jsonResponse.data) {
+                        processRawArrayData(jsonResponse.data);
+                        updateBadgeSuccess(sheetName, "Apps Script");
+                    } else if (Array.isArray(jsonResponse)) {
+                        processRawArrayData(jsonResponse);
+                        updateBadgeSuccess(sheetName, "Apps Script");
+                    } else {
+                        throw new Error("Formato JSON no compatible");
+                    }
+                })
+                .catch(err => {
+                    console.warn("Reintentando con conector directo CSV de Google Sheets...", err);
+                    Papa.parse(directGsheetCsvUrl, {
+                        download: true,
+                        header: true,
+                        skipEmptyLines: true,
+                        complete: function(results) {
+                            if (results.data && results.data.length > 0) {
+                                processObjectsData(results.data);
+                                updateBadgeSuccess(sheetName, "");
+                            } else {
+                                fallbackToEmbeddedData();
+                            }
+                        },
+                        error: function() {
+                            fallbackToEmbeddedData();
+                        }
+                    });
+                })
+                .finally(() => {
+                    syncIcon.classList.remove('animate-spin');
+                });
+        }
+
+        function fallbackToEmbeddedData() {
+            Papa.parse('AppSheet.ViewData.2026-10-03 (1).csv', {
+                download: true,
+                header: true,
+                skipEmptyLines: true,
+                complete: function(results) {
+                    processObjectsData(results.data);
+                    document.getElementById('data-source-badge').className = "px-3 py-1.5 rounded-full text-xs font-medium bg-indigo-50 text-indigo-700 border border-indigo-200 flex items-center gap-2";
+                    document.getElementById('data-source-badge').innerHTML = `<span class="w-2 h-2 rounded-full bg-indigo-500"></span> Datos Locales Adjuntos`;
+                }
+            });
+        }
+
+        function updateBadgeSuccess(sheetName, sourceName) {
+            const badge = document.getElementById('data-source-badge');
+            badge.className = "px-3 py-1.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center gap-2";
+            badge.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-500"></span> Conectado: ${sheetName}`;
+        }
+
+        function handleFileUpload(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            Papa.parse(file, {
+                header: true,
+                skipEmptyLines: true,
+                complete: function(results) {
+                    processObjectsData(results.data);
+                    document.getElementById('data-source-badge').className = "px-3 py-1.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center gap-2";
+                    document.getElementById('data-source-badge').innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-500"></span> CSV Subido Exitosamente`;
+                }
+            });
+        }
+
+        function processObjectsData(data) {
+            rawData = data.map(row => {
+                let formattedRow = {};
+                for (let origKey in REQUIRED_COLUMNS_MAPPING) {
+                    const upperHeader = REQUIRED_COLUMNS_MAPPING[origKey];
+                    let val = row[origKey] || row[upperHeader] || row[origKey.toLowerCase()] || '';
+                    formattedRow[upperHeader] = val ? val.toString().trim().toUpperCase() : '';
+                }
+                
+                let distrito = formattedRow['DISTRITO'] || '';
+                let ctoUso = formattedRow['CTO_USO'] || '';
+                let distritoCtoCombined = formattedRow['DISTRITO CTO_USO'] || '';
+
+                if (!distrito && distritoCtoCombined) {
+                    distrito = distritoCtoCombined.split('-')[0].trim();
+                }
+                if (!ctoUso && distritoCtoCombined && distritoCtoCombined.includes('-')) {
+                    ctoUso = distritoCtoCombined.split('-').slice(1).join('-').trim();
+                }
+
+                formattedRow['DISTRITO'] = distrito || '-';
+                formattedRow['CTO_USO'] = ctoUso || '-';
+
+                return formattedRow;
+            });
+
+            populateFilterDropdowns();
+            renderRankingDashboard();
+            applyFilters();
+        }
+
+        function processRawArrayData(matrix) {
+            if (!matrix || matrix.length < 2) return;
+            const headers = matrix[0].map(h => h.toString().trim());
+            const rows = matrix.slice(1);
+
+            rawData = rows.map(rowArr => {
+                let rowObj = {};
+                headers.forEach((h, idx) => {
+                    rowObj[h] = rowArr[idx] !== undefined ? rowArr[idx] : '';
+                });
+
+                let formattedRow = {};
+                for (let origKey in REQUIRED_COLUMNS_MAPPING) {
+                    const upperHeader = REQUIRED_COLUMNS_MAPPING[origKey];
+                    let val = rowObj[origKey] || rowObj[upperHeader] || '';
+                    formattedRow[upperHeader] = val ? val.toString().trim().toUpperCase() : '';
+                }
+
+                let distrito = formattedRow['DISTRITO'] || '';
+                let ctoUso = formattedRow['CTO_USO'] || '';
+                let distritoCtoCombined = formattedRow['DISTRITO CTO_USO'] || '';
+
+                if (!distrito && distritoCtoCombined) {
+                    distrito = distritoCtoCombined.split('-')[0].trim();
+                }
+                if (!ctoUso && distritoCtoCombined && distritoCtoCombined.includes('-')) {
+                    ctoUso = distritoCtoCombined.split('-').slice(1).join('-').trim();
+                }
+
+                formattedRow['DISTRITO'] = distrito || '-';
+                formattedRow['CTO_USO'] = ctoUso || '-';
+
+                return formattedRow;
+            });
+
+            populateFilterDropdowns();
+            renderRankingDashboard();
+            applyFilters();
+        }
+
+        function renderRankingDashboard() {
+            const rankingContainer = document.getElementById('ranking-container');
+            rankingContainer.innerHTML = '';
+
+            const garantiasData = rawData.filter(row => 
+                row['TIPOCASO'].includes('GARANTIA') || row['ESTADO'].includes('GARANTIA')
+            );
+
+            const cuadrillaCounts = {};
+            garantiasData.forEach(row => {
+                const c = row['CUADRILLA_V'] || 'SIN ASIGNAR';
+                if (c !== '-') {
+                    cuadrillaCounts[c] = (cuadrillaCounts[c] || 0) + 1;
+                }
+            });
+
+            const sortedCuadrillas = Object.entries(cuadrillaCounts)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 4);
+
+            if (sortedCuadrillas.length === 0) {
+                rankingContainer.innerHTML = `
+                    <div class="col-span-full text-center py-4 text-slate-400 text-xs">
+                        No hay registros de garantías para calcular el ranking.
+                    </div>`;
+                return;
+            }
+
+            sortedCuadrillas.forEach(([cuadrilla, total], idx) => {
+                const card = document.createElement('div');
+                card.className = "bg-slate-50 border border-slate-200 rounded-xl p-4 cursor-pointer hover:border-indigo-500 hover:shadow-md hover:bg-white transition flex items-center justify-between group";
+                card.onclick = () => filterByRankingCuadrilla(cuadrilla);
+
+                card.innerHTML = `
+                    <div class="flex items-center space-x-3">
+                        <div class="w-8 h-8 rounded-lg bg-red-100 text-red-700 font-bold text-xs flex items-center justify-center border border-red-200 group-hover:bg-red-600 group-hover:text-white transition">
+                            #${idx + 1}
+                        </div>
+                        <div>
+                            <h4 class="text-xs font-bold text-slate-800 group-hover:text-indigo-600 transition">${cuadrilla}</h4>
+                            <p class="text-[10px] text-slate-500">Cuadrilla Operativa</p>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <span class="text-lg font-bold text-red-600">${total}</span>
+                        <p class="text-[10px] text-slate-400">Garantías</p>
+                    </div>
+                `;
+                rankingContainer.appendChild(card);
+            });
+        }
+
+        function filterByRankingCuadrilla(cuadrilla) {
+            const selectCuadrilla = document.getElementById('filter-cuadrilla');
+            selectCuadrilla.value = cuadrilla;
+            applyFilters();
+
+            document.querySelector('section:has(#table-body)').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function populateFilterDropdowns() {
+            const cuadrillas = new Set();
+            const estados = new Set();
+            const tipos = new Set();
+
+            rawData.forEach(row => {
+                if (row['CUADRILLA_V'] && row['CUADRILLA_V'] !== '-') cuadrillas.add(row['CUADRILLA_V']);
+                if (row['ESTADO_OP'] && row['ESTADO_OP'] !== '-') estados.add(row['ESTADO_OP']);
+                if (row['TIPOCASO'] && row['TIPOCASO'] !== '-') tipos.add(row['TIPOCASO']);
+            });
+
+            populateSelect('filter-cuadrilla', Array.from(cuadrillas).sort(), 'TODAS LAS CUADRILLAS');
+            populateSelect('filter-estado', Array.from(estados).sort(), 'TODOS LOS ESTADOS');
+            populateSelect('filter-tipo', Array.from(tipos).sort(), 'TODOS LOS TIPOS');
+        }
+
+        function populateSelect(id, items, defaultText) {
+            const select = document.getElementById(id);
+            select.innerHTML = `<option value="">${defaultText}</option>`;
+            items.forEach(item => {
+                const opt = document.createElement('option');
+                opt.value = item;
+                opt.textContent = item;
+                select.appendChild(opt);
+            });
+        }
+
+        // Función Auxiliar para parsear fechas
+        function parseDateString(str) {
+            if (!str || str === '-') return null;
+            
+            if (str.includes('-')) {
+                const parts = str.split('T')[0].split('-');
+                if (parts.length === 3 && parts[0].length === 4) {
+                    return new Date(parts[0], parts[1] - 1, parts[2]);
+                }
+            }
+
+            if (str.includes('/')) {
+                const parts = str.split(' ');
+                const dateParts = parts[0].split('/');
+                if (dateParts.length === 3) {
+                    return new Date(dateParts[2], dateParts[1] - 1, dateParts[0]);
+                }
+            }
+
+            const parsed = new Date(str);
+            return isNaN(parsed) ? null : parsed;
+        }
+
+        function applyFilters() {
+            const searchVal = document.getElementById('search-input').value.toUpperCase().trim();
+            const cuadrillaVal = document.getElementById('filter-cuadrilla').value;
+            const estadoVal = document.getElementById('filter-estado').value;
+            const tipoVal = document.getElementById('filter-tipo').value;
+
+            // Rango de Fechas
+            const startDateVal = document.getElementById('date-start').value;
+            const endDateVal = document.getElementById('date-end').value;
+
+            const startDate = startDateVal ? new Date(startDateVal + 'T00:00:00') : null;
+            const endDate = endDateVal ? new Date(endDateVal + 'T23:59:59') : null;
+
+            const filtered = rawData.filter(row => {
+                // Coincidencia por texto libre
+                const matchSearch = !searchVal || 
+                    row['TICKETU'].includes(searchVal) ||
+                    row['TICKETS'].includes(searchVal) ||
+                    row['VALIDA_COD_PEDIDO'].includes(searchVal) ||
+                    row['DNI_CLIENTE'].includes(searchVal) ||
+                    row['NOM_CLIENTE'].includes(searchVal) ||
+                    row['DISTRITO'].includes(searchVal) ||
+                    row['CUADRILLA_V'].includes(searchVal);
+
+                // Coincidencias desplegables
+                const matchCuadrilla = !cuadrillaVal || row['CUADRILLA_V'] === cuadrillaVal;
+                const matchEstado = !estadoVal || row['ESTADO_OP'] === estadoVal;
+                const matchTipo = !tipoVal || row['TIPOCASO'] === tipoVal;
+
+                // Coincidencia por Rango de Fecha (Fecha_Gestion_v)
+                let matchDate = true;
+                if (startDate || endDate) {
+                    const recordDate = parseDateString(row['FECHA_GESTION_V']);
+                    if (recordDate) {
+                        if (startDate && recordDate < startDate) matchDate = false;
+                        if (endDate && recordDate > endDate) matchDate = false;
+                    } else {
+                        matchDate = false;
+                    }
+                }
+
+                return matchSearch && matchCuadrilla && matchEstado && matchTipo && matchDate;
+            });
+
+            renderTable(filtered);
+            updateKPIs(filtered);
+            renderTecnicoChart(filtered);
+        }
+
+        function clearDateFilter() {
+            document.getElementById('date-start').value = '';
+            document.getElementById('date-end').value = '';
+            applyFilters();
+        }
+
+        function updateKPIs(data) {
+            document.getElementById('kpi-total').textContent = data.length;
+            
+            const cuadrillasUnicas = new Set(data.map(r => r['CUADRILLA_V']).filter(v => v !== '-')).size;
+            document.getElementById('kpi-cuadrillas').textContent = cuadrillasUnicas;
+
+            const garantias = data.filter(r => r['TIPOCASO'].includes('GARANTIA') || r['ESTADO'].includes('GARANTIA')).length;
+            document.getElementById('kpi-garantias').textContent = garantias;
+
+            const cerrados = data.filter(r => r['ESTADO_OP'].includes('FINALIZADO') || r['ESTADO_OP'].includes('CERRADO') || r['ESTADO_OP'].includes('COMPLETADO')).length;
+            document.getElementById('kpi-cerrados').textContent = cerrados;
+
+            document.getElementById('results-count').textContent = `Mostrando ${data.length} registros`;
+        }
+
+        // GRÁFICO HORIZONTAL: GARANTÍAS POR TÉCNICO (CUADRILLA_V), ORDENADO DE MAYOR A MENOR
+        function renderTecnicoChart(data) {
+            const counts = {};
+            data.forEach(row => {
+                const esGarantia = row['TIPOCASO'].includes('GARANTIA') || row['TIPOCASO'].includes('GARANTÍA') ||
+                                   row['ESTADO'].includes('GARANTIA') || row['ESTADO'].includes('GARANTÍA');
+                if (!esGarantia) return;
+                const tecnico = row['CUADRILLA_V'] || 'SIN ASIGNAR';
+                if (tecnico === '-') return;
+                counts[tecnico] = (counts[tecnico] || 0) + 1;
+            });
+
+            // Mayor a menor
+            const sortedEntries = Object.entries(counts).sort((a, b) => b[1] - a[1]);
+            const labels = sortedEntries.map(e => e[0]);
+            const values = sortedEntries.map(e => e[1]);
+
+            // Altura según cantidad de técnicos para que todas las barras se lean
+            const box = document.getElementById('tecnico-chart-box');
+            box.style.height = Math.max(220, labels.length * 28 + 30) + 'px';
+
+            const ctx = document.getElementById('tecnicoChart').getContext('2d');
+
+            if (tecnicoChartInstance) {
+                tecnicoChartInstance.destroy();
+            }
+
+            tecnicoChartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Garantías',
+                        data: values,
+                        backgroundColor: 'rgba(220, 38, 38, 0.85)',
+                        borderColor: 'rgba(185, 28, 28, 1)',
+                        borderWidth: 1.5,
+                        borderRadius: 6,
+                        barThickness: 20
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    layout: { padding: { right: 40 } },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return ` Garantías: ${context.raw}`;
+                                }
+                            }
+                        },
+                        datalabels: {
+                            anchor: 'end',
+                            align: 'end',
+                            offset: 4,
+                            font: { weight: 'bold', size: 11 },
+                            color: '#dc2626',
+                            formatter: function(value) { return value; }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            ticks: { precision: 0, font: { size: 11 } },
+                            grid: { color: '#f1f5f9' }
+                        },
+                        y: {
+                            ticks: { font: { size: 11, weight: '600' } },
+                            grid: { display: false }
+                        }
+                    }
+                }
+            });
+
+            // Sin garantías en el filtro actual
+            if (labels.length === 0) {
+                ctx.save();
+                ctx.font = '12px sans-serif';
+                ctx.fillStyle = '#94a3b8';
+                ctx.textAlign = 'center';
+                ctx.fillText('No hay garantías para mostrar con los filtros actuales.', tecnicoChartInstance.width / 2, 40);
+                ctx.restore();
+            }
+        }
+
+        function renderTable(data) {
+            const tbody = document.getElementById('table-body');
+            tbody.innerHTML = '';
+
+            if (data.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="21" class="text-center py-12 text-slate-400 font-medium">
+                            No se encontraron registros que coincidan con la búsqueda o filtros seleccionados.
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            data.forEach(row => {
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-slate-50 transition border-b border-slate-100';
+
+                tr.innerHTML = `
+                    <td class="px-3.5 py-3 font-mono font-bold text-indigo-600">${row['FECHA_GESTION_V']}</td>
+                    <td class="px-3.5 py-3 font-semibold text-slate-800">${row['ESTADO']}</td>
+                    <td class="px-3.5 py-3">
+                        <span class="px-2 py-0.5 rounded-md text-[10px] font-bold ${row['TIPOCASO'].includes('GARANTIA') ? 'bg-red-100 text-red-800 border border-red-200' : 'bg-slate-100 text-slate-700'}">
+                            ${row['TIPOCASO']}
+                        </span>
+                    </td>
+                    <td class="px-3.5 py-3">${row['ESTADO_OP']}</td>
+                    <td class="px-3.5 py-3 font-bold text-indigo-600">${row['CUADRILLA_V']}</td>
+                    <td class="px-3.5 py-3 font-mono text-slate-600">${row['TICKETU']}</td>
+                    <td class="px-3.5 py-3 font-mono text-slate-600">${row['TICKETS']}</td>
+                    <td class="px-3.5 py-3 font-mono text-emerald-700 font-bold">${row['VALIDA_COD_PEDIDO']}</td>
+                    <td class="px-3.5 py-3 font-mono text-slate-600">${row['DNI_CLIENTE']}</td>
+                    <td class="px-3.5 py-3 font-medium text-slate-800">${row['NOM_CLIENTE']}</td>
+                    <td class="px-3.5 py-3 font-mono text-slate-500 text-[11px]">${row['COORDENADAS_DIRECCION']}</td>
+                    <td class="px-3.5 py-3 max-w-xs truncate" title="${row['DIRECCION_CLIENTE']}">${row['DIRECCION_CLIENTE']}</td>
+                    <td class="px-3.5 py-3">${row['DEPARTAMENTO']}</td>
+                    <td class="px-3.5 py-3">${row['PROVINCIA']}</td>
+                    <td class="px-3.5 py-3 font-bold text-indigo-600">${row['DISTRITO']}</td>
+                    <td class="px-3.5 py-3 font-mono text-slate-600">${row['CTO_USO']}</td>
+                    <td class="px-3.5 py-3">${row['4TA CTO']}</td>
+                    <td class="px-3.5 py-3 font-mono">${row['PUERTO UTILIZADO']}</td>
+                    <td class="px-3.5 py-3 font-mono">${row['SN']}</td>
+                    <td class="px-3.5 py-3 font-mono">${row['SN_MESH']}</td>
+                    <td class="px-3.5 py-3 whitespace-normal min-w-[280px] text-slate-600 font-mono text-[11px] leading-relaxed">${row['OBS_TECNICO_V']}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function resetFilters() {
+            document.getElementById('search-input').value = '';
+            document.getElementById('filter-cuadrilla').value = '';
+            document.getElementById('filter-estado').value = '';
+            document.getElementById('filter-tipo').value = '';
+            clearDateFilter();
+        }
+    </script>
+</body>
+</html>
