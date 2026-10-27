@@ -16,7 +16,7 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     <!-- Chart.js para Gráficos Estadísticos -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- Chart.js Plugin Datalabels para mostrar cantidades sobre/al lado de cada barra -->
+    <!-- Chart.js Plugin Datalabels -->
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0"></script>
     <style>
         .custom-scrollbar::-webkit-scrollbar {
@@ -62,25 +62,30 @@
 
     <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
 
-        <!-- Selector de Mes / Hoja y Botón de Sincronización -->
+        <!-- Panel de Selección de Mes, Carga e Integración -->
         <section class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
             <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
                 
                 <div class="flex items-center gap-3">
-                    <div class="p-2 bg-indigo-50 rounded-lg text-indigo-600">
+                    <div class="p-2.5 bg-indigo-50 rounded-xl text-indigo-600 border border-indigo-100">
                         <i data-lucide="calendar" class="w-5 h-5"></i>
                     </div>
                     <div>
-                        <h2 class="text-sm font-semibold text-slate-800">Origen de Datos (Google Sheets)</h2>
-                        <p class="text-xs text-slate-500"><span class="font-mono text-indigo-600"></span> Apps Script Integrado</p>
+                        <h2 class="text-sm font-bold text-slate-800">Origen de Datos (Google Sheets)</h2>
+                        <p class="text-xs text-slate-500 flex items-center gap-1">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                            Sincronización activa con Google Apps Script
+                        </p>
                     </div>
                 </div>
 
-                <!-- Selector de Meses -->
+                <!-- Selector de Meses y Acciones de Archivo -->
                 <div class="flex flex-wrap items-center gap-3">
-                    <div class="flex items-center gap-2 bg-slate-50 border border-slate-200 rounded-xl px-3 py-1.5">
-                        <label for="month-select" class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Hoja / Mes:</label>
-                        <select id="month-select" class="bg-transparent text-xs font-bold text-indigo-600 focus:outline-none cursor-pointer">
+                    
+                    <!-- Selección de Mes Destino -->
+                    <div class="flex items-center gap-2 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 shadow-inner">
+                        <label for="month-select" class="text-xs font-bold text-slate-500 uppercase tracking-wider">Mes Destino:</label>
+                        <select id="month-select" class="bg-transparent text-xs font-bold text-indigo-700 focus:outline-none cursor-pointer">
                             <option value="ENERO">ENERO</option>
                             <option value="FEBRERO">FEBRERO</option>
                             <option value="MARZO">MARZO</option>
@@ -89,38 +94,58 @@
                             <option value="JUNIO">JUNIO</option>
                             <option value="JULIO">JULIO</option>
                             <option value="AGOSTO">AGOSTO</option>
-                            <option value="SEPTIEMBRE" selected>SEPTIEMBRE</option>
+                            <option value="SEPTIEMBRE">SEPTIEMBRE</option>
                             <option value="OCTUBRE">OCTUBRE</option>
                             <option value="NOVIEMBRE">NOVIEMBRE</option>
                             <option value="DICIEMBRE">DICIEMBRE</option>
                         </select>
                     </div>
 
-                    <button onclick="fetchSheetData()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-xs px-4 py-2.5 rounded-xl transition flex items-center gap-2 shadow-md shadow-indigo-100 active:scale-95">
-                        <i data-lucide="refresh-cw" class="w-4 h-4" id="sync-icon"></i> Sincronizar Mes
+                    <!-- Botón de Carga de Archivo CSV -->
+                    <input type="file" id="csv-file-input" accept=".csv" class="hidden">
+                    <button onclick="document.getElementById('csv-file-input').click()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-medium text-xs px-4 py-2.5 rounded-xl transition flex items-center gap-2 shadow-md shadow-emerald-100 active:scale-95">
+                        <i data-lucide="upload-cloud" class="w-4 h-4"></i> Cargar Archivo CSV
                     </button>
 
-                    <!-- Respaldo Local -->
-                    <input type="file" id="csv-file-input" accept=".csv" class="hidden">
-                    <button onclick="document.getElementById('csv-file-input').click()" title="Cargar CSV Local de respaldo" class="bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 text-xs px-3 py-2.5 rounded-xl transition flex items-center gap-1.5 shadow-sm">
-                        <i data-lucide="file-up" class="w-4 h-4 text-slate-500"></i> CSV Local
+                    <!-- Botón Sincronizar Desde Google Sheets -->
+                    <button onclick="fetchSheetData()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-xs px-4 py-2.5 rounded-xl transition flex items-center gap-2 shadow-md shadow-indigo-100 active:scale-95">
+                        <i data-lucide="refresh-cw" class="w-4 h-4" id="sync-icon"></i> Sincronizar Desde Google Sheets
                     </button>
+
                 </div>
 
             </div>
         </section>
 
-        <!-- RANKING DE GARANTÍAS POR CUADRILLA -->
+        <!-- SECCIÓN 1: DISTRIBUCIÓN DE GARANTÍAS POR TÉCNICO / CUADRILLA -->
         <section class="bg-white border border-slate-200 rounded-2xl p-5 space-y-4 shadow-sm">
-            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
-                <h3 class="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-2">
-                    <i data-lucide="trophy" class="w-4 h-4 text-amber-500"></i> Ranking - Garantías por Cuadrilla
-                </h3>
-                <span class="text-[11px] text-slate-500">Haz clic en una tarjeta para filtrar los clientes</span>
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-3">
+                <div>
+                    <h3 class="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-2">
+                        <i data-lucide="users" class="w-4 h-4 text-red-500"></i> DISTRIBUCIÓN DE GARANTÍAS POR TÉCNICO / CUADRILLA
+                    </h3>
+                    <p class="text-[11px] text-slate-400 mt-0.5">Ordenado descendentemente por mayor índice de incidencias</p>
+                </div>
+
+                <!-- Botones de Alternancia (Tarjetas / Gráfico Donut) -->
+                <div class="flex items-center bg-slate-100 p-1 rounded-xl gap-1 self-start sm:self-auto border border-slate-200">
+                    <button id="view-btn-cards" onclick="toggleTecnicoView('cards')" class="px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition bg-white text-indigo-600 shadow-sm">
+                        <i data-lucide="layout-grid" class="w-3.5 h-3.5"></i> Tarjetas
+                    </button>
+                    <button id="view-btn-donut" onclick="toggleTecnicoView('donut')" class="px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition text-slate-500 hover:text-slate-800">
+                        <i data-lucide="pie-chart" class="w-3.5 h-3.5"></i> Gráfico Donut
+                    </button>
+                </div>
             </div>
-            
-            <div id="ranking-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                <!-- Se poblará dinámicamente -->
+
+            <!-- Vista 1: Tarjetas / Cards Grid -->
+            <div id="tecnico-cards-view" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <!-- Se puebla dinámicamente -->
+            </div>
+
+            <!-- Vista 2: Gráfico Donut para Técnicos -->
+            <div id="tecnico-donut-view" class="hidden relative w-full h-[320px] flex items-center justify-center">
+                <canvas id="tecnicoDonutChart"></canvas>
             </div>
         </section>
 
@@ -128,14 +153,14 @@
         <section class="bg-white border border-slate-200 rounded-2xl p-5 space-y-4 shadow-sm">
             <div class="flex items-center justify-between border-b border-slate-100 pb-3">
                 <h3 class="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-2">
-                    <i data-lucide="search-code" class="w-4 h-4 text-indigo-600"></i> Consulta Específica & Filtros
+                    <i data-lucide="search-code" class="w-4 h-4 text-indigo-600"></i> Búsqueda Específica & Filtros
                 </h3>
                 <button onclick="resetFilters()" class="text-xs text-slate-500 hover:text-indigo-600 transition flex items-center gap-1">
                     <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i> Restablecer Filtros
                 </button>
             </div>
 
-            <!-- Fila 1 de Filtros (Búsqueda y Desplegables) -->
+            <!-- Fila 1 de Filtros -->
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 <div class="space-y-1.5">
                     <label class="text-[11px] font-semibold text-slate-500 uppercase">Buscar Ticket / Pedido / DNI / Cliente</label>
@@ -167,11 +192,11 @@
                 </div>
             </div>
 
-            <!-- Fila 2 de Filtros: Rango de Fecha por Fecha_Gestion_v -->
+            <!-- Fila 2 de Filtros: Rango de Fecha -->
             <div class="pt-2 border-t border-slate-100 flex flex-wrap items-center gap-4">
                 <div class="flex items-center gap-2">
                     <i data-lucide="calendar-range" class="w-4 h-4 text-indigo-600"></i>
-                    <span class="text-xs font-bold text-slate-700 uppercase">Filtrar por Fecha Gestión (Fecha_Gestion_v):</span>
+                    <span class="text-xs font-bold text-slate-700 uppercase">Filtrar por Fecha Gestión:</span>
                 </div>
 
                 <div class="flex items-center gap-3 flex-wrap">
@@ -212,21 +237,46 @@
             </div>
         </section>
 
-        <!-- SECCIÓN DE GRÁFICO ESTADÍSTICO HORIZONTAL POR TIPO DE CASO -->
-        <section class="bg-white border border-slate-200 rounded-2xl p-5 space-y-4 shadow-sm">
-            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
-                <h3 class="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-2">
-                    <i data-lucide="bar-chart-3" class="w-4 h-4 text-red-600"></i> Garantías por Técnico (de mayor a menor)
-                </h3>
-                <div class="flex items-center gap-3 text-[11px]">
-                    <span class="flex items-center gap-1 font-semibold text-red-600">
-                        <span class="w-2.5 h-2.5 rounded-full bg-red-600"></span> Cantidad de garantías por cuadrilla/técnico
-                    </span>
+        <!-- SECCIÓN 2: REPORTES ANALÍTICOS Y GRÁFICOS COMBINADOS -->
+        <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            
+            <!-- Gráfico: Gestiones por Fecha (2 Columnas) -->
+            <div class="lg:col-span-2 bg-white border border-slate-200 rounded-2xl p-5 shadow-sm space-y-4">
+                <div class="border-b border-slate-100 pb-3 flex items-center justify-between">
+                    <div>
+                        <h3 class="text-sm font-bold text-slate-800 flex items-center gap-2">
+                            <i data-lucide="calendar-days" class="w-4 h-4 text-indigo-600"></i>
+                            Gestiones por Fecha (Fecha_Gestion)
+                        </h3>
+                        <p class="text-xs text-slate-500">Organizadas por fecha en formato DD/MM/AAAA con totales superiores</p>
+                    </div>
+                </div>
+                <div class="relative w-full h-[320px]">
+                    <canvas id="fechaChart"></canvas>
                 </div>
             </div>
-            <div id="tecnico-chart-box" class="relative w-full min-h-[220px]">
-                <canvas id="tecnicoChart"></canvas>
+
+            <!-- Gráfico: Distribución por TipoCaso (1 Columna) -->
+            <div class="lg:col-span-1 bg-white border border-slate-200 rounded-2xl p-5 shadow-sm space-y-4 flex flex-col">
+                <div class="border-b border-slate-100 pb-3">
+                    <h3 class="text-sm font-bold text-slate-800 flex items-center gap-2">
+                        <i data-lucide="pie-chart" class="w-4 h-4 text-emerald-600"></i>
+                        Distribución por TipoCaso
+                    </h3>
+                    <p class="text-xs text-slate-500">Proporción y cantidades exactas por Tipo de Caso</p>
+                </div>
+                
+                <div class="relative flex-1 min-h-[260px] flex items-center justify-center">
+                    <canvas id="estadoChart"></canvas>
+                    
+                    <!-- Texto Central en la Dona -->
+                    <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none mb-10">
+                        <span id="donut-center-total" class="text-2xl font-bold text-slate-800">0</span>
+                        <span class="text-[10px] uppercase font-bold text-slate-400">Total Casos</span>
+                    </div>
+                </div>
             </div>
+
         </section>
 
         <!-- Tabla de Reportería -->
@@ -275,11 +325,11 @@
     </main>
 
     <script>
-        // CONFIGURACIÓN DE CONEXIÓN A GOOGLE SHEETS
-        const APPS_SCRIPT_WEB_APP_URL = "https://script.google.com/macros/s/AKfycby6xmNGRmKPRWdUsIdGK4iil0xtmOOHrRp8nE7LbgYegQWaqt5fPFRdzWwdrWG41L0V/exec";
+        // CONFIGURACIÓN DE CONEXIÓN A GOOGLE SHEETS & APPS SCRIPT
+        const APPS_SCRIPT_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbw6GtLmUHa9gWSLPv0sqx1H0AsNG_LhyXe9BzgJQg__eemrX2UK2P2kP9ZiqShU6fid/exec";
         const SPREADSHEET_ID = "1iw8zHpOKAAK8oRpLdLZNO7fA1DeOc-uOD94ffhmjP8g";
 
-        // Registrar el plugin de DataLabels para Chart.js
+        // Registrar plugin de DataLabels
         if (typeof ChartDataLabels !== 'undefined') {
             Chart.register(ChartDataLabels);
         }
@@ -310,15 +360,31 @@
             'Obs_tecnico_v': 'OBS_TECNICO_V'
         };
 
+        const MONTH_NAMES = [
+            "ENERO", "FEBRERO", "MARZO", "ABRIL", "MAYO", "JUNIO",
+            "JULIO", "AGOSTO", "SEPTIEMBRE", "OCTUBRE", "NOVIEMBRE", "DICIEMBRE"
+        ];
+
         let rawData = [];
-        let tecnicoChartInstance = null;
+        let fechaChartInstance = null;
+        let estadoChartInstance = null;
+        let tecnicoDonutChartInstance = null;
+        let currentTecnicoMode = 'cards';
 
         document.addEventListener('DOMContentLoaded', () => {
             lucide.createIcons();
 
+            // Seleccionar mes en curso por defecto
+            const currentMonthIndex = new Date().getMonth();
+            const currentMonthName = MONTH_NAMES[currentMonthIndex];
+            const monthSelect = document.getElementById('month-select');
+            if (monthSelect) {
+                monthSelect.value = currentMonthName;
+            }
+
             // Event Listeners
-            document.getElementById('month-select').addEventListener('change', fetchSheetData);
-            document.getElementById('csv-file-input').addEventListener('change', handleFileUpload);
+            monthSelect.addEventListener('change', fetchSheetData);
+            document.getElementById('csv-file-input').addEventListener('change', handleCSVUploadAndOverwrite);
             document.getElementById('search-input').addEventListener('input', applyFilters);
             document.getElementById('filter-cuadrilla').addEventListener('change', applyFilters);
             document.getElementById('filter-estado').addEventListener('change', applyFilters);
@@ -328,71 +394,112 @@
             document.getElementById('date-start').addEventListener('change', applyFilters);
             document.getElementById('date-end').addEventListener('change', applyFilters);
 
-            // Cargar datos por defecto
+            // Cargar datos por defecto del mes actual desde Google Sheets
             fetchSheetData();
         });
 
+        // OBTENER DATOS DE GOOGLE SHEETS
         function fetchSheetData() {
             const sheetName = document.getElementById('month-select').value;
             const badge = document.getElementById('data-source-badge');
             const syncIcon = document.getElementById('sync-icon');
 
             badge.className = "px-3 py-1.5 rounded-full text-xs font-medium bg-amber-50 text-amber-700 border border-amber-200 flex items-center gap-2";
-            badge.innerHTML = `<span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span> Cargando Hoja ${sheetName}...`;
-            syncIcon.classList.add('animate-spin');
+            badge.innerHTML = `<span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span> Cargando Hoja '${sheetName}'...`;
+            if(syncIcon) syncIcon.classList.add('animate-spin');
 
             const endpoint = `${APPS_SCRIPT_WEB_APP_URL}?sheetName=${encodeURIComponent(sheetName)}&spreadsheetId=${SPREADSHEET_ID}`;
-            const directGsheetCsvUrl = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(sheetName)}`;
 
             fetch(endpoint)
-                .then(res => {
-                    if (!res.ok) throw new Error("Respuesta no OK de Apps Script");
-                    return res.json();
-                })
+                .then(res => res.json())
                 .then(jsonResponse => {
-                    if (jsonResponse && jsonResponse.data) {
+                    if (jsonResponse && jsonResponse.data && jsonResponse.data.length > 0) {
                         processRawArrayData(jsonResponse.data);
-                        updateBadgeSuccess(sheetName, "Apps Script");
-                    } else if (Array.isArray(jsonResponse)) {
+                        updateBadgeSuccess(sheetName, "Google Sheets");
+                    } else if (Array.isArray(jsonResponse) && jsonResponse.length > 0) {
                         processRawArrayData(jsonResponse);
-                        updateBadgeSuccess(sheetName, "Apps Script");
+                        updateBadgeSuccess(sheetName, "Google Sheets");
                     } else {
-                        throw new Error("Formato JSON no compatible");
+                        rawData = [];
+                        renderTable([]);
+                        updateKPIs([]);
+                        renderTecnicoSection([]);
+                        renderFechaChart([]);
+                        renderEstadoChart([]);
+                        badge.className = "px-3 py-1.5 rounded-full text-xs font-medium bg-amber-50 text-amber-700 border border-amber-200 flex items-center gap-2";
+                        badge.innerHTML = `<span class="w-2 h-2 rounded-full bg-amber-500"></span> Hoja sin datos: ${sheetName}`;
                     }
                 })
                 .catch(err => {
-                    console.warn("Reintentando con conector directo CSV de Google Sheets...", err);
-                    Papa.parse(directGsheetCsvUrl, {
-                        download: true,
-                        header: true,
-                        skipEmptyLines: true,
-                        complete: function(results) {
-                            if (results.data && results.data.length > 0) {
-                                processObjectsData(results.data);
-                                updateBadgeSuccess(sheetName, "");
-                            } else {
-                                fallbackToEmbeddedData();
-                            }
-                        },
-                        error: function() {
-                            fallbackToEmbeddedData();
-                        }
-                    });
+                    console.error("Error al consultar Apps Script:", err);
+                    badge.className = "px-3 py-1.5 rounded-full text-xs font-medium bg-red-50 text-red-700 border border-red-200 flex items-center gap-2";
+                    badge.innerHTML = `<span class="w-2 h-2 rounded-full bg-red-500"></span> Error al conectar con Google Sheets`;
                 })
                 .finally(() => {
-                    syncIcon.classList.remove('animate-spin');
+                    if(syncIcon) syncIcon.classList.remove('animate-spin');
                 });
         }
 
-        function fallbackToEmbeddedData() {
-            Papa.parse('AppSheet.ViewData.2026-10-03 (1).csv', {
-                download: true,
-                header: true,
+        // CARGAR CSV LOCAL Y REEMPLAZAR INFORMACIÓN EN GOOGLE SHEETS
+        function handleCSVUploadAndOverwrite(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const selectedMonth = document.getElementById('month-select').value;
+
+            const confirmOverwrite = confirm(
+                `¿Deseas reemplazar TODA la información de la hoja del mes '${selectedMonth}' en Google Sheets con los datos de este archivo CSV?\n\n` +
+                `Atención: Esta acción eliminará los registros anteriores del mes ${selectedMonth} en el archivo de Google Sheets y colocará la nueva información.`
+            );
+
+            if (!confirmOverwrite) {
+                e.target.value = '';
+                return;
+            }
+
+            const badge = document.getElementById('data-source-badge');
+            badge.className = "px-3 py-1.5 rounded-full text-xs font-medium bg-amber-50 text-amber-700 border border-amber-200 flex items-center gap-2";
+            badge.innerHTML = `<span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span> Procesando y Guardando en Google Sheets...`;
+
+            Papa.parse(file, {
+                header: false,
                 skipEmptyLines: true,
                 complete: function(results) {
-                    processObjectsData(results.data);
-                    document.getElementById('data-source-badge').className = "px-3 py-1.5 rounded-full text-xs font-medium bg-indigo-50 text-indigo-700 border border-indigo-200 flex items-center gap-2";
-                    document.getElementById('data-source-badge').innerHTML = `<span class="w-2 h-2 rounded-full bg-indigo-500"></span> Datos Locales Adjuntos`;
+                    const rawMatrixData = results.data;
+
+                    if (!rawMatrixData || rawMatrixData.length === 0) {
+                        alert("El archivo CSV subido se encuentra vacío.");
+                        fetchSheetData();
+                        return;
+                    }
+
+                    processRawArrayData(rawMatrixData);
+
+                    const payload = {
+                        sheetName: selectedMonth,
+                        spreadsheetId: SPREADSHEET_ID,
+                        data: rawMatrixData
+                    };
+
+                    fetch(APPS_SCRIPT_WEB_APP_URL, {
+                        method: 'POST',
+                        mode: 'no-cors',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(payload)
+                    })
+                    .then(() => {
+                        badge.className = "px-3 py-1.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center gap-2";
+                        badge.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-500"></span> Guardado y Reemplazado en: ${selectedMonth}`;
+                        alert(`¡Éxito! Se ha reemplazado correctamente la información del mes ${selectedMonth} en Google Sheets.`);
+                    })
+                    .catch(err => {
+                        console.error("Error al guardar en Google Sheets:", err);
+                        alert("Hubo un detalle al comunicarse con Google Sheets, pero los datos se muestran localmente.");
+                    });
+
+                    e.target.value = '';
                 }
             });
         }
@@ -400,57 +507,16 @@
         function updateBadgeSuccess(sheetName, sourceName) {
             const badge = document.getElementById('data-source-badge');
             badge.className = "px-3 py-1.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center gap-2";
-            badge.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-500"></span> Conectado: ${sheetName}`;
-        }
-
-        function handleFileUpload(e) {
-            const file = e.target.files[0];
-            if (!file) return;
-
-            Papa.parse(file, {
-                header: true,
-                skipEmptyLines: true,
-                complete: function(results) {
-                    processObjectsData(results.data);
-                    document.getElementById('data-source-badge').className = "px-3 py-1.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center gap-2";
-                    document.getElementById('data-source-badge').innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-500"></span> CSV Subido Exitosamente`;
-                }
-            });
-        }
-
-        function processObjectsData(data) {
-            rawData = data.map(row => {
-                let formattedRow = {};
-                for (let origKey in REQUIRED_COLUMNS_MAPPING) {
-                    const upperHeader = REQUIRED_COLUMNS_MAPPING[origKey];
-                    let val = row[origKey] || row[upperHeader] || row[origKey.toLowerCase()] || '';
-                    formattedRow[upperHeader] = val ? val.toString().trim().toUpperCase() : '';
-                }
-                
-                let distrito = formattedRow['DISTRITO'] || '';
-                let ctoUso = formattedRow['CTO_USO'] || '';
-                let distritoCtoCombined = formattedRow['DISTRITO CTO_USO'] || '';
-
-                if (!distrito && distritoCtoCombined) {
-                    distrito = distritoCtoCombined.split('-')[0].trim();
-                }
-                if (!ctoUso && distritoCtoCombined && distritoCtoCombined.includes('-')) {
-                    ctoUso = distritoCtoCombined.split('-').slice(1).join('-').trim();
-                }
-
-                formattedRow['DISTRITO'] = distrito || '-';
-                formattedRow['CTO_USO'] = ctoUso || '-';
-
-                return formattedRow;
-            });
-
-            populateFilterDropdowns();
-            renderRankingDashboard();
-            applyFilters();
+            badge.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-500"></span> Conectado (${sourceName}): ${sheetName}`;
         }
 
         function processRawArrayData(matrix) {
-            if (!matrix || matrix.length < 2) return;
+            if (!matrix || matrix.length < 2) {
+                rawData = [];
+                applyFilters();
+                return;
+            }
+
             const headers = matrix[0].map(h => h.toString().trim());
             const rows = matrix.slice(1);
 
@@ -485,68 +551,7 @@
             });
 
             populateFilterDropdowns();
-            renderRankingDashboard();
             applyFilters();
-        }
-
-        function renderRankingDashboard() {
-            const rankingContainer = document.getElementById('ranking-container');
-            rankingContainer.innerHTML = '';
-
-            const garantiasData = rawData.filter(row => 
-                row['TIPOCASO'].includes('GARANTIA') || row['ESTADO'].includes('GARANTIA')
-            );
-
-            const cuadrillaCounts = {};
-            garantiasData.forEach(row => {
-                const c = row['CUADRILLA_V'] || 'SIN ASIGNAR';
-                if (c !== '-') {
-                    cuadrillaCounts[c] = (cuadrillaCounts[c] || 0) + 1;
-                }
-            });
-
-            const sortedCuadrillas = Object.entries(cuadrillaCounts)
-                .sort((a, b) => b[1] - a[1])
-                .slice(0, 4);
-
-            if (sortedCuadrillas.length === 0) {
-                rankingContainer.innerHTML = `
-                    <div class="col-span-full text-center py-4 text-slate-400 text-xs">
-                        No hay registros de garantías para calcular el ranking.
-                    </div>`;
-                return;
-            }
-
-            sortedCuadrillas.forEach(([cuadrilla, total], idx) => {
-                const card = document.createElement('div');
-                card.className = "bg-slate-50 border border-slate-200 rounded-xl p-4 cursor-pointer hover:border-indigo-500 hover:shadow-md hover:bg-white transition flex items-center justify-between group";
-                card.onclick = () => filterByRankingCuadrilla(cuadrilla);
-
-                card.innerHTML = `
-                    <div class="flex items-center space-x-3">
-                        <div class="w-8 h-8 rounded-lg bg-red-100 text-red-700 font-bold text-xs flex items-center justify-center border border-red-200 group-hover:bg-red-600 group-hover:text-white transition">
-                            #${idx + 1}
-                        </div>
-                        <div>
-                            <h4 class="text-xs font-bold text-slate-800 group-hover:text-indigo-600 transition">${cuadrilla}</h4>
-                            <p class="text-[10px] text-slate-500">Cuadrilla Operativa</p>
-                        </div>
-                    </div>
-                    <div class="text-right">
-                        <span class="text-lg font-bold text-red-600">${total}</span>
-                        <p class="text-[10px] text-slate-400">Garantías</p>
-                    </div>
-                `;
-                rankingContainer.appendChild(card);
-            });
-        }
-
-        function filterByRankingCuadrilla(cuadrilla) {
-            const selectCuadrilla = document.getElementById('filter-cuadrilla');
-            selectCuadrilla.value = cuadrilla;
-            applyFilters();
-
-            document.querySelector('section:has(#table-body)').scrollIntoView({ behavior: 'smooth' });
         }
 
         function populateFilterDropdowns() {
@@ -576,7 +581,6 @@
             });
         }
 
-        // Función Auxiliar para parsear fechas
         function parseDateString(str) {
             if (!str || str === '-') return null;
             
@@ -599,13 +603,20 @@
             return isNaN(parsed) ? null : parsed;
         }
 
+        function formatDateToDDMMYYYY(dateObj) {
+            if (!dateObj || isNaN(dateObj)) return '-';
+            const day = String(dateObj.getDate()).padStart(2, '0');
+            const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+            const year = dateObj.getFullYear();
+            return `${day}/${month}/${year}`;
+        }
+
         function applyFilters() {
             const searchVal = document.getElementById('search-input').value.toUpperCase().trim();
             const cuadrillaVal = document.getElementById('filter-cuadrilla').value;
             const estadoVal = document.getElementById('filter-estado').value;
             const tipoVal = document.getElementById('filter-tipo').value;
 
-            // Rango de Fechas
             const startDateVal = document.getElementById('date-start').value;
             const endDateVal = document.getElementById('date-end').value;
 
@@ -613,7 +624,6 @@
             const endDate = endDateVal ? new Date(endDateVal + 'T23:59:59') : null;
 
             const filtered = rawData.filter(row => {
-                // Coincidencia por texto libre
                 const matchSearch = !searchVal || 
                     row['TICKETU'].includes(searchVal) ||
                     row['TICKETS'].includes(searchVal) ||
@@ -623,12 +633,10 @@
                     row['DISTRITO'].includes(searchVal) ||
                     row['CUADRILLA_V'].includes(searchVal);
 
-                // Coincidencias desplegables
                 const matchCuadrilla = !cuadrillaVal || row['CUADRILLA_V'] === cuadrillaVal;
                 const matchEstado = !estadoVal || row['ESTADO_OP'] === estadoVal;
                 const matchTipo = !tipoVal || row['TIPOCASO'] === tipoVal;
 
-                // Coincidencia por Rango de Fecha (Fecha_Gestion_v)
                 let matchDate = true;
                 if (startDate || endDate) {
                     const recordDate = parseDateString(row['FECHA_GESTION_V']);
@@ -645,7 +653,9 @@
 
             renderTable(filtered);
             updateKPIs(filtered);
-            renderTecnicoChart(filtered);
+            renderTecnicoSection(filtered);
+            renderFechaChart(filtered);
+            renderEstadoChart(filtered);
         }
 
         function clearDateFilter() {
@@ -669,93 +679,276 @@
             document.getElementById('results-count').textContent = `Mostrando ${data.length} registros`;
         }
 
-        // GRÁFICO HORIZONTAL: GARANTÍAS POR TÉCNICO (CUADRILLA_V), ORDENADO DE MAYOR A MENOR
-        function renderTecnicoChart(data) {
+        // SECCIÓN DISTRIBUCIÓN DE GARANTÍAS POR TÉCNICO / CUADRILLA
+        function toggleTecnicoView(mode) {
+            currentTecnicoMode = mode;
+            const cardsView = document.getElementById('tecnico-cards-view');
+            const donutView = document.getElementById('tecnico-donut-view');
+
+            const btnCards = document.getElementById('view-btn-cards');
+            const btnDonut = document.getElementById('view-btn-donut');
+
+            if (mode === 'cards') {
+                cardsView.classList.remove('hidden');
+                donutView.classList.add('hidden');
+
+                btnCards.className = "px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition bg-white text-indigo-600 shadow-sm";
+                btnDonut.className = "px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition text-slate-500 hover:text-slate-800";
+            } else {
+                cardsView.classList.add('hidden');
+                donutView.classList.remove('hidden');
+
+                btnDonut.className = "px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition bg-white text-indigo-600 shadow-sm";
+                btnCards.className = "px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition text-slate-500 hover:text-slate-800";
+            }
+        }
+
+        function renderTecnicoSection(data) {
+            const garantiasData = data.filter(row => 
+                row['TIPOCASO'].includes('GARANTIA') || row['ESTADO'].includes('GARANTIA')
+            );
+
             const counts = {};
-            data.forEach(row => {
-                const esGarantia = row['TIPOCASO'].includes('GARANTIA') || row['TIPOCASO'].includes('GARANTÍA') ||
-                                   row['ESTADO'].includes('GARANTIA') || row['ESTADO'].includes('GARANTÍA');
-                if (!esGarantia) return;
-                const tecnico = row['CUADRILLA_V'] || 'SIN ASIGNAR';
-                if (tecnico === '-') return;
-                counts[tecnico] = (counts[tecnico] || 0) + 1;
+            garantiasData.forEach(row => {
+                const c = row['CUADRILLA_V'] || 'SIN ASIGNAR';
+                if (c !== '-') counts[c] = (counts[c] || 0) + 1;
             });
 
-            // Mayor a menor
             const sortedEntries = Object.entries(counts).sort((a, b) => b[1] - a[1]);
-            const labels = sortedEntries.map(e => e[0]);
-            const values = sortedEntries.map(e => e[1]);
+            const totalGarantias = garantiasData.length;
 
-            // Altura según cantidad de técnicos para que todas las barras se lean
-            const box = document.getElementById('tecnico-chart-box');
-            box.style.height = Math.max(220, labels.length * 28 + 30) + 'px';
+            // Renderizar Tarjetas
+            const cardsContainer = document.getElementById('tecnico-cards-view');
+            cardsContainer.innerHTML = '';
 
-            const ctx = document.getElementById('tecnicoChart').getContext('2d');
+            if (sortedEntries.length === 0) {
+                cardsContainer.innerHTML = `
+                    <div class="col-span-full text-center py-6 text-slate-400 text-xs">
+                        No hay registros de garantías para mostrar en esta consulta.
+                    </div>`;
+            } else {
+                const colors = ['#ef4444', '#f97316', '#eab308', '#6366f1', '#a855f7', '#06b6d4', '#10b981'];
 
-            if (tecnicoChartInstance) {
-                tecnicoChartInstance.destroy();
+                sortedEntries.forEach(([tecnico, count], idx) => {
+                    const pct = totalGarantias ? ((count / totalGarantias) * 100).toFixed(1) : '0';
+                    const color = colors[idx % colors.length];
+
+                    const card = document.createElement('div');
+                    card.className = "bg-slate-50/70 border border-slate-200 rounded-xl p-3.5 space-y-2 hover:bg-white hover:shadow-sm transition cursor-pointer";
+                    card.onclick = () => {
+                        document.getElementById('filter-cuadrilla').value = tecnico;
+                        applyFilters();
+                    };
+
+                    card.innerHTML = `
+                        <div class="flex items-center justify-between gap-2">
+                            <div class="flex items-center gap-2 truncate">
+                                <span class="w-5 h-5 rounded-full text-white text-[10px] font-bold flex items-center justify-center shrink-0" style="background-color: ${color}">
+                                    ${idx + 1}
+                                </span>
+                                <span class="text-xs font-bold text-slate-800 truncate" title="${tecnico}">${tecnico}</span>
+                            </div>
+                            <div class="text-right shrink-0">
+                                <span class="text-sm font-bold text-slate-900">${count}</span>
+                                <span class="text-[10px] text-slate-400 font-medium">(${pct}%)</span>
+                            </div>
+                        </div>
+                        <div class="w-full bg-slate-200 h-1.5 rounded-full overflow-hidden">
+                            <div class="h-full rounded-full transition-all duration-500" style="width: ${pct}%; background-color: ${color}"></div>
+                        </div>
+                    `;
+                    cardsContainer.appendChild(card);
+                });
             }
 
-            tecnicoChartInstance = new Chart(ctx, {
-                type: 'bar',
+            // Renderizar Gráfico Donut de Técnicos
+            const labels = sortedEntries.map(e => e[0]);
+            const values = sortedEntries.map(e => e[1]);
+            const palette = ['#ef4444', '#f97316', '#eab308', '#6366f1', '#a855f7', '#06b6d4', '#10b981', '#64748b'];
+
+            const ctx = document.getElementById('tecnicoDonutChart').getContext('2d');
+            if (tecnicoDonutChartInstance) tecnicoDonutChartInstance.destroy();
+
+            tecnicoDonutChartInstance = new Chart(ctx, {
+                type: 'doughnut',
                 data: {
                     labels: labels,
                     datasets: [{
-                        label: 'Garantías',
                         data: values,
-                        backgroundColor: 'rgba(220, 38, 38, 0.85)',
-                        borderColor: 'rgba(185, 28, 28, 1)',
-                        borderWidth: 1.5,
-                        borderRadius: 6,
-                        barThickness: 20
+                        backgroundColor: palette.slice(0, labels.length),
+                        borderWidth: 2,
+                        borderColor: '#ffffff'
                     }]
                 },
                 options: {
-                    indexAxis: 'y',
                     responsive: true,
                     maintainAspectRatio: false,
-                    layout: { padding: { right: 40 } },
+                    cutout: '60%',
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                            labels: { boxWidth: 10, padding: 10, font: { size: 10, weight: 'bold' } }
+                        },
+                        datalabels: {
+                            color: '#ffffff',
+                            font: { weight: 'bold', size: 10 },
+                            formatter: (value) => {
+                                const pct = totalGarantias ? Math.round((value / totalGarantias) * 100) : 0;
+                                return pct > 4 ? `${pct}%` : '';
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // GRÁFICO 1: GESTIONES POR FECHA (BARRAS VERTICALES CRONOLÓGICAS)
+        function renderFechaChart(data) {
+            const dateCounts = {};
+
+            data.forEach(row => {
+                const dateObj = parseDateString(row['FECHA_GESTION_V']);
+                if (dateObj) {
+                    const formatted = formatDateToDDMMYYYY(dateObj);
+                    dateCounts[formatted] = (dateCounts[formatted] || 0) + 1;
+                }
+            });
+
+            const sortedLabels = Object.keys(dateCounts).sort((a, b) => {
+                const [dA, mA, yA] = a.split('/').map(Number);
+                const [dB, mB, yB] = b.split('/').map(Number);
+                return new Date(yA, mA - 1, dA) - new Date(yB, mB - 1, dB);
+            });
+
+            const sortedValues = sortedLabels.map(l => dateCounts[l]);
+
+            const ctx = document.getElementById('fechaChart').getContext('2d');
+            if (fechaChartInstance) fechaChartInstance.destroy();
+
+            fechaChartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: sortedLabels,
+                    datasets: [{
+                        label: 'Gestiones',
+                        data: sortedValues,
+                        backgroundColor: '#6366f1',
+                        hoverBackgroundColor: '#4f46e5',
+                        borderRadius: 6,
+                        barThickness: 'flex',
+                        maxBarThickness: 28
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    layout: { padding: { top: 25, right: 10 } },
                     plugins: {
                         legend: { display: false },
                         tooltip: {
                             callbacks: {
-                                label: function(context) {
-                                    return ` Garantías: ${context.raw}`;
-                                }
+                                label: (context) => ` Total Gestiones: ${context.raw}`
                             }
                         },
                         datalabels: {
                             anchor: 'end',
                             align: 'end',
-                            offset: 4,
-                            font: { weight: 'bold', size: 11 },
-                            color: '#dc2626',
-                            formatter: function(value) { return value; }
+                            offset: 2,
+                            font: { weight: 'bold', size: 10 },
+                            color: '#1e293b',
+                            formatter: (val) => val
                         }
                     },
                     scales: {
                         x: {
-                            beginAtZero: true,
-                            ticks: { precision: 0, font: { size: 11 } },
-                            grid: { color: '#f1f5f9' }
+                            grid: { display: false },
+                            ticks: {
+                                font: { size: 10, weight: '500' },
+                                maxRotation: 45,
+                                minRotation: 45
+                            }
                         },
                         y: {
-                            ticks: { font: { size: 11, weight: '600' } },
-                            grid: { display: false }
+                            beginAtZero: true,
+                            grid: { color: '#f1f5f9' },
+                            ticks: { precision: 0, font: { size: 11 } }
                         }
                     }
                 }
             });
+        }
 
-            // Sin garantías en el filtro actual
-            if (labels.length === 0) {
-                ctx.save();
-                ctx.font = '12px sans-serif';
-                ctx.fillStyle = '#94a3b8';
-                ctx.textAlign = 'center';
-                ctx.fillText('No hay garantías para mostrar con los filtros actuales.', tecnicoChartInstance.width / 2, 40);
-                ctx.restore();
+        // GRÁFICO 2: DISTRIBUCIÓN POR TIPOCASO (DONUT CHART CON TOTAL AL CENTRO Y CANTIDADES EXACTAS)
+        function renderEstadoChart(data) {
+            const tipoCounts = {};
+            data.forEach(row => {
+                const tipo = row['TIPOCASO'] || 'SIN TIPO';
+                if (tipo !== '-') {
+                    tipoCounts[tipo] = (tipoCounts[tipo] || 0) + 1;
+                }
+            });
+
+            const labels = Object.keys(tipoCounts);
+            const values = Object.values(tipoCounts);
+            const total = values.reduce((a, b) => a + b, 0);
+
+            // Actualizar total en el centro de la dona
+            const centerTotalElem = document.getElementById('donut-center-total');
+            if (centerTotalElem) {
+                centerTotalElem.textContent = total;
             }
+
+            const palette = [
+                '#dc2626', '#3b82f6', '#10b981', '#f59e0b', 
+                '#8b5cf6', '#ec4899', '#06b6d4', '#64748b'
+            ];
+
+            const ctx = document.getElementById('estadoChart').getContext('2d');
+            if (estadoChartInstance) estadoChartInstance.destroy();
+
+            estadoChartInstance = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: values,
+                        backgroundColor: palette.slice(0, labels.length),
+                        borderWidth: 2,
+                        borderColor: '#ffffff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '68%',
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                boxWidth: 12,
+                                padding: 10,
+                                font: { size: 10, weight: 'bold' }
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: (context) => {
+                                    const val = context.raw;
+                                    const pct = total ? ((val / total) * 100).toFixed(1) : 0;
+                                    return ` ${context.label}: ${val} casos (${pct}%)`;
+                                }
+                            }
+                        },
+                        datalabels: {
+                            color: '#ffffff',
+                            font: { weight: 'bold', size: 11 },
+                            formatter: (value) => {
+                                return value > 0 ? value : '';
+                            }
+                        }
+                    }
+                }
+            });
         }
 
         function renderTable(data) {
@@ -766,7 +959,7 @@
                 tbody.innerHTML = `
                     <tr>
                         <td colspan="21" class="text-center py-12 text-slate-400 font-medium">
-                            No se encontraron registros que coincidan con la búsqueda o filtros seleccionados.
+                            No se encontraron registros que coincidan con la búsqueda o la hoja seleccionada está vacía.
                         </td>
                     </tr>
                 `;
